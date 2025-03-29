@@ -1,31 +1,10 @@
-import axios from 'axios';
-import { API_BASE_URL } from '../env';
 import {
     AuthResponseType,
     LoginUserType,
     RegisterUserType,
     UserType,
 } from '../schemas/authSchemas';
-
-// Create axios instance with default config
-const authAxios = axios.create({
-    baseURL: API_BASE_URL,
-    headers: {
-        'Content-Type': 'application/json',
-    },
-});
-
-// Add interceptor to attach token to requests
-authAxios.interceptors.request.use(
-    (config) => {
-        const token = localStorage.getItem('auth_token');
-        if (token) {
-            config.headers['Authorization'] = `Bearer ${token}`;
-        }
-        return config;
-    },
-    (error) => Promise.reject(error)
-);
+import apiClient from './apiClient';
 
 export const authApi = {
     /**
@@ -36,7 +15,7 @@ export const authApi = {
     registerUser: async (
         userData: RegisterUserType
     ): Promise<AuthResponseType> => {
-        const response = await authAxios.post('/auth/register', userData);
+        const response = await apiClient.post('/auth/register', userData);
         return response.data;
     },
 
@@ -48,7 +27,7 @@ export const authApi = {
     loginUser: async (
         credentials: LoginUserType
     ): Promise<AuthResponseType> => {
-        const response = await authAxios.post('/auth/login', credentials);
+        const response = await apiClient.post('/auth/login', credentials);
 
         // Store token in localStorage for future requests
         if (response.data.token) {
@@ -70,7 +49,7 @@ export const authApi = {
      */
     logoutUser: async (): Promise<void> => {
         try {
-            await authAxios.post('/auth/logout');
+            await apiClient.post('/auth/logout');
         } catch (error) {
             console.error('Logout error:', error);
         } finally {
@@ -85,7 +64,7 @@ export const authApi = {
      * @returns Current user data
      */
     getCurrentUser: async (): Promise<UserType> => {
-        const response = await authAxios.get('/auth/me');
+        const response = await apiClient.get('/auth/me');
         return response.data;
     },
 
@@ -103,7 +82,7 @@ export const authApi = {
             throw new Error('No refresh token available');
         }
 
-        const response = await authAxios.post('/auth/refresh', {
+        const response = await apiClient.post('/auth/refresh', {
             refreshToken,
         });
 
