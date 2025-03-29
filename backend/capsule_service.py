@@ -135,10 +135,11 @@ class CapsuleService:
                     "id": capsule_id,
                     "title": capsule["title"],
                     "content": None,
-                    #"description": capsule["description"],
+                    "description": capsule["description"],
                     "unlockDate": capsule["unlock_date"],
                     "isPrivate": capsule["is_private"],
                     "ownerId": capsule["owner_id"]
+                    "recipients": capsule["recipients"],
                 }"""
         
         # Get the content from IPFS using the CID
@@ -179,7 +180,8 @@ class CapsuleService:
                 #"description": capsule["description"],
                 "unlockDate": capsule["unlock_date"],
                 "isPrivate": capsule["is_private"],
-                "ownerId": capsule["owner_id"]
+                "ownerId": capsule["owner_id"],
+                "recipients": capsule["recipients"]
             }
                 
         except Exception as e:
