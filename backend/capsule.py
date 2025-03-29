@@ -10,6 +10,22 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(level
 logger = logging.getLogger(__name__)
 
 
+def get_unlockable_capsules():
+    collection = db.get_collection("capsules")
+    if collection is None:
+        logger.error("Database connection not established")
+        return Error("Database connection error")
+
+    capsules = []
+    now = datetime.datetime.now()
+    for capsule in collection:
+        # Add unlockable status
+        capsule["is_unlockable"] = now >= capsule["unlock_date"]
+        # Convert ObjectId to string for JSON serialization
+        capsule["_id"] = str(capsule["_id"])
+        capsules.append(capsule)
+
+    return [capsule for capsule in capsules if capsule["is_unlockable"]]
 
 class Capsule:
     """
@@ -294,20 +310,3 @@ class Capsule:
         except Exception as e:
             logger.error(f"Error retrieving capsules: {e}")
             return Error(f"Error retrieving capsules: {str(e)}")
-
-    def get_unlockable_capsules(self):
-        collection = db.get_collection(self.collection_name)
-        if collection is None:
-            logger.error("Database connection not established")
-            return Error("Database connection error")
-
-        capsules = []
-        now = datetime.datetime.now()
-        for capsule in collection:
-            # Add unlockable status
-            capsule["is_unlockable"] = now >= capsule["unlock_date"]
-            # Convert ObjectId to string for JSON serialization
-            capsule["_id"] = str(capsule["_id"])
-            capsules.append(capsule)
-
-        return [capsule for capsule in capsules if capsule["is_unlockable"]]
