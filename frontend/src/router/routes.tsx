@@ -1,6 +1,7 @@
 import { Box } from '@mui/material';
 import { Navigate, RouteObject } from 'react-router-dom';
 import { MainLayout } from '../components/layouts/MainLayout';
+import { CreateCapsulePage } from '../pages/CreateCapsulePage';
 import { HomePage } from '../pages/HomePage';
 
 export const routes: RouteObject[] = [
@@ -10,9 +11,11 @@ export const routes: RouteObject[] = [
         children: [
             {
                 index: true,
-                element: (
-                    <HomePage />
-                ),
+                element: <HomePage />,
+            },
+            {
+                path: 'capsules/create',
+                element: <CreateCapsulePage />,
             },
             {
                 path: '*',
