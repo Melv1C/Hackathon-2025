@@ -61,33 +61,3 @@ def decrypt_message(iv, ciphertext, key):
     plaintext = plaintext_padded[:-padding_length]
     
     return plaintext
-
-def encrypt_message_b64(message, key):
-    """
-    Encrypt a message and encode as base64 for storage and transmission
-    
-    Args:
-        message (bytes): The message to encrypt
-        key (bytes): The encryption key
-        
-    Returns:
-        tuple: (iv_b64, ciphertext_b64) where both are base64-encoded strings
-    """
-    iv, ciphertext = encrypt_message(message, key)
-    return b64encode(iv).decode('utf-8'), b64encode(ciphertext).decode('utf-8')
-
-def decrypt_message_b64(iv_b64, ciphertext_b64, key):
-    """
-    Decrypt a message from base64-encoded iv and ciphertext
-    
-    Args:
-        iv_b64 (str): Base64-encoded initialization vector
-        ciphertext_b64 (str): Base64-encoded ciphertext
-        key (bytes): The encryption key
-        
-    Returns:
-        bytes: The decrypted message
-    """
-    iv = b64decode(iv_b64)
-    ciphertext = b64decode(ciphertext_b64)
-    return decrypt_message(iv, ciphertext, key)
