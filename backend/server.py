@@ -3,6 +3,7 @@ from flask import Flask
 from flask_cors import CORS
 from dotenv import load_dotenv
 from capsule_routes import capsule_bp
+from auth_routes import auth_bp
 
 # Load environment variables
 load_dotenv()
@@ -27,7 +28,7 @@ def create_app(test_config=None):
         app.config.update(test_config)
     
     # Register blueprints
-    # app.register_blueprint(auth_bp)
+    app.register_blueprint(auth_bp)
     app.register_blueprint(capsule_bp)
     
     # Register error handlers
