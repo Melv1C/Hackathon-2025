@@ -3,6 +3,8 @@ import { Navigate, RouteObject } from 'react-router-dom';
 import { MainLayout } from '../components/layouts/MainLayout';
 import { CreateCapsulePage } from '../pages/CreateCapsulePage';
 import { HomePage } from '../pages/HomePage';
+import { LoginPage } from '../pages/LoginPage';
+import { RegisterPage } from '../pages/RegisterPage';
 
 export const routes: RouteObject[] = [
     {
@@ -16,6 +18,14 @@ export const routes: RouteObject[] = [
             {
                 path: 'capsules/create',
                 element: <CreateCapsulePage />,
+            },
+            {
+                path: 'login',
+                element: <LoginPage />,
+            },
+            {
+                path: 'register',
+                element: <RegisterPage />,
             },
             {
                 path: '*',
