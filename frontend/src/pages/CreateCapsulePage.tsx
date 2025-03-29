@@ -18,6 +18,7 @@ import {
     TextField,
     Typography,
 } from '@mui/material';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
@@ -27,6 +28,7 @@ import {
     CreateCapsuleSchema,
     CreateCapsuleType,
 } from '../schemas/capsuleSchemas';
+import dayjs from 'dayjs';
 
 export function CreateCapsulePage() {
     const navigate = useNavigate();
@@ -70,6 +72,9 @@ export function CreateCapsulePage() {
     const isPrivate = watch('isPrivate');
     const [recipientEmail, setRecipientEmail] = React.useState('');
     const [recipients, setRecipients] = React.useState<string[]>([]);
+
+    // For the DateTimePicker, to properly handle date validation
+    const today = new Date();
 
     // Handle success response
     React.useEffect(() => {
@@ -247,18 +252,35 @@ export function CreateCapsulePage() {
                             </Box>
                         )}
 
-                        <TextField
-                            id="unlockDate"
-                            label="Unlock Date"
-                            type="date"
-                            fullWidth
-                            InputLabelProps={{ shrink: true }}
-                            inputProps={{
-                                min: new Date().toISOString().split('T')[0],
-                            }}
-                            error={!!errors.unlockDate}
-                            helperText={errors.unlockDate?.message}
-                            {...register('unlockDate')}
+                        <Controller
+                            name="unlockDate"
+                            control={control}
+                            render={({ field, fieldState }) => (
+                                <DateTimePicker
+                                    label="Unlock Date"
+                                    value={field.value ? dayjs(field.value) : null}
+                                    onChange={(newValue) => {
+                                        // Use ISO string format for consistent date handling
+                                        field.onChange(
+                                            newValue ? newValue.toString() : ''
+                                        );
+                                    }}
+                                    slotProps={{
+                                        textField: {
+                                            fullWidth: true,
+                                            variant: 'outlined',
+                                            error: !!fieldState.error,
+                                            helperText:
+                                                fieldState.error?.message ||
+                                                'Select when the time capsule should be unlocked',
+                                        },
+                                    }}
+                                    minDateTime={dayjs(today).add(1, 'minute')}
+                                    format="YYYY-MM-DD HH:mm"
+                                    disablePast={true}
+                                    ampm={false}
+                                />
+                            )}
                         />
 
                         <FormControl>
