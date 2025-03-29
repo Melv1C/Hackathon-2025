@@ -1,7 +1,9 @@
 import CloseIcon from '@mui/icons-material/Close';
+import LogoutIcon from '@mui/icons-material/Logout';
 import MenuIcon from '@mui/icons-material/Menu';
 import {
     AppBar,
+    Avatar,
     Box,
     Button,
     Container,
@@ -10,14 +12,19 @@ import {
     List,
     ListItem,
     ListItemButton,
+    ListItemIcon,
     ListItemText,
+    Menu,
+    MenuItem,
     Toolbar,
+    Tooltip,
     Typography,
     useMediaQuery,
     useTheme,
 } from '@mui/material';
 import { useState } from 'react';
 import { Outlet, Link as RouterLink } from 'react-router-dom';
+import { useAuth } from '../../hooks/useAuth';
 
 // Navigation links for the header
 const navItems = [
@@ -30,9 +37,27 @@ export function MainLayout() {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
     const [mobileOpen, setMobileOpen] = useState(false);
+    const { isAuthenticated, user, logoutUser } = useAuth();
+
+    // Account menu state
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const open = Boolean(anchorEl);
 
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
+    };
+
+    const handleOpenAccountMenu = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleCloseAccountMenu = () => {
+        setAnchorEl(null);
+    };
+
+    const handleLogout = async () => {
+        await logoutUser();
+        handleCloseAccountMenu();
     };
 
     // Mobile drawer component
@@ -75,15 +100,38 @@ export function MainLayout() {
                         </ListItemButton>
                     </ListItem>
                 ))}
-                <ListItem disablePadding>
-                    <ListItemButton
-                        component={RouterLink}
-                        to="/login"
-                        sx={{ textAlign: 'center' }}
-                    >
-                        <ListItemText primary="Login" />
-                    </ListItemButton>
-                </ListItem>
+                {isAuthenticated ? (
+                    <>
+                        <ListItem disablePadding>
+                            <ListItemButton sx={{ textAlign: 'center' }}>
+                                <ListItemText
+                                    primary={`Hello, ${user?.name || 'User'}`}
+                                />
+                            </ListItemButton>
+                        </ListItem>
+                        <ListItem disablePadding>
+                            <ListItemButton
+                                onClick={handleLogout}
+                                sx={{ textAlign: 'center' }}
+                            >
+                                <ListItemIcon sx={{ minWidth: 'auto', mr: 1 }}>
+                                    <LogoutIcon fontSize="small" />
+                                </ListItemIcon>
+                                <ListItemText primary="Logout" />
+                            </ListItemButton>
+                        </ListItem>
+                    </>
+                ) : (
+                    <ListItem disablePadding>
+                        <ListItemButton
+                            component={RouterLink}
+                            to="/login"
+                            sx={{ textAlign: 'center' }}
+                        >
+                            <ListItemText primary="Login" />
+                        </ListItemButton>
+                    </ListItem>
+                )}
             </List>
         </Box>
     );
@@ -148,14 +196,89 @@ export function MainLayout() {
                                         {item.text}
                                     </Button>
                                 ))}
-                                <Button
-                                    component={RouterLink}
-                                    to="/login"
-                                    variant="outlined"
-                                    sx={{ ml: 2 }}
-                                >
-                                    Login
-                                </Button>
+
+                                {isAuthenticated ? (
+                                    <>
+                                        <Tooltip title="Account settings">
+                                            <IconButton
+                                                onClick={handleOpenAccountMenu}
+                                                size="small"
+                                                sx={{ ml: 2 }}
+                                                aria-controls={
+                                                    open
+                                                        ? 'account-menu'
+                                                        : undefined
+                                                }
+                                                aria-haspopup="true"
+                                                aria-expanded={
+                                                    open ? 'true' : undefined
+                                                }
+                                            >
+                                                <Avatar
+                                                    sx={{
+                                                        width: 32,
+                                                        height: 32,
+                                                        bgcolor: 'primary.main',
+                                                    }}
+                                                >
+                                                    {user?.name?.charAt(0) ||
+                                                        'U'}
+                                                </Avatar>
+                                            </IconButton>
+                                        </Tooltip>
+                                        <Menu
+                                            anchorEl={anchorEl}
+                                            id="account-menu"
+                                            open={open}
+                                            onClose={handleCloseAccountMenu}
+                                            onClick={handleCloseAccountMenu}
+                                            PaperProps={{
+                                                elevation: 0,
+                                                sx: {
+                                                    overflow: 'visible',
+                                                    filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                                                    mt: 1.5,
+                                                    '& .MuiAvatar-root': {
+                                                        width: 32,
+                                                        height: 32,
+                                                        ml: -0.5,
+                                                        mr: 1,
+                                                    },
+                                                },
+                                            }}
+                                            transformOrigin={{
+                                                horizontal: 'right',
+                                                vertical: 'top',
+                                            }}
+                                            anchorOrigin={{
+                                                horizontal: 'right',
+                                                vertical: 'bottom',
+                                            }}
+                                        >
+                                            <MenuItem
+                                                component={RouterLink}
+                                                to="/profile"
+                                            >
+                                                <Avatar /> Profile
+                                            </MenuItem>
+                                            <MenuItem onClick={handleLogout}>
+                                                <ListItemIcon>
+                                                    <LogoutIcon fontSize="small" />
+                                                </ListItemIcon>
+                                                Logout
+                                            </MenuItem>
+                                        </Menu>
+                                    </>
+                                ) : (
+                                    <Button
+                                        component={RouterLink}
+                                        to="/login"
+                                        variant="outlined"
+                                        sx={{ ml: 2 }}
+                                    >
+                                        Login
+                                    </Button>
+                                )}
                             </Box>
                         )}
 

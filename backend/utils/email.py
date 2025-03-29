@@ -3,7 +3,7 @@ import smtplib
 from email.message import EmailMessage
 import ssl
 
-def send(message:str, adress:str, subject = ""):
+def send_email(message:str, adress:str, subject = ""):
     # Create a text/plain message
     msg = EmailMessage()
     msg.set_content(message)
@@ -22,7 +22,7 @@ def send(message:str, adress:str, subject = ""):
         server.login(senderemail, password)
         server.sendmail(senderemail, adress, msg.as_string())
 
-def send_many(message:str, multiple_adress: [str], subject = ""):
+def send_many_email(message:str, multiple_adress: [str], subject = ""):
     # Create a text/plain message
     msg = EmailMessage()
     msg.set_content(message)

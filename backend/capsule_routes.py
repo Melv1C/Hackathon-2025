@@ -3,6 +3,7 @@ import logging
 import os
 from capsule_service import CapsuleService
 from error import Error
+from auth_service import AuthService
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -15,34 +16,17 @@ capsule_bp = Blueprint('capsule', __name__, url_prefix='')
 encryption_key = os.getenv('SECRET_KEY', 'default-very-secure-encryption-key').encode('utf-8')
 capsule_service = CapsuleService(encryption_key)
 
-def get_user_id_from_token():
-    """Helper function to extract user_id from token"""
-    auth_header = request.headers.get('Authorization')
-    
-    if not auth_header:
-        return None
-        
-    token = auth_header.split(' ')[1] if 'Bearer' in auth_header else auth_header
-    
-    #payload = AuthService.verify_token(token)
-    payload = None
-    
-    if not payload:
-        return None
-        
-    return payload.get('user_id')
+auth_service = AuthService()
 
 @capsule_bp.route('/capsules', methods=['POST'])
 def create_capsule():
     """Create a new time capsule"""
     try:
         # Verify authentication
-        # user_id = get_user_id_from_token()
-        user_id = "123"
+        user_id = auth_service.get_user_id_from_request(request=request)
         
         if not user_id:
             return jsonify({"error": "Authentication required"}), 401
-            
         # Get request data
         data = request.get_json()
         
@@ -63,8 +47,8 @@ def get_capsule(capsule_id):
     """Get a specific capsule"""
     try:
         # Get user_id from token (if authenticated)
-        # user_id = get_user_id_from_token()
-        user_id = "123"
+        user_id = auth_service.get_user_id_from_request(request=request)
+
         
         # Get capsule
         result = capsule_service.get_capsule(capsule_id, user_id)
@@ -77,3 +61,4 @@ def get_capsule(capsule_id):
     except Exception as e:
         logger.error(f"Error retrieving capsule: {e}")
         return jsonify({"error": "An error occurred while retrieving capsule"}), 500
+

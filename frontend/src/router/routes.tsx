@@ -1,5 +1,6 @@
 import { Box } from '@mui/material';
 import { Navigate, RouteObject } from 'react-router-dom';
+import { ProtectedRoute } from '../components/auth/ProtectedRoute';
 import { MainLayout } from '../components/layouts/MainLayout';
 import { CreateCapsulePage } from '../pages/CreateCapsulePage';
 import { HomePage } from '../pages/HomePage';
@@ -17,7 +18,11 @@ export const routes: RouteObject[] = [
             },
             {
                 path: 'capsules/create',
-                element: <CreateCapsulePage />,
+                element: (
+                    <ProtectedRoute>
+                        <CreateCapsulePage />
+                    </ProtectedRoute>
+                ),
             },
             {
                 path: 'login',

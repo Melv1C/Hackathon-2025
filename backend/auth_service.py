@@ -124,17 +124,16 @@ class AuthService:
             str or None: The user ID if valid, None otherwise
         """
         auth_header = request.headers.get('Authorization')
-        
+        print(auth_header)
         if not auth_header:
             return None
             
         try:
             # Extract token from header
             token = auth_header.split(' ')[1] if 'Bearer' in auth_header else auth_header
-            
             # Verify token
             payload = self.verify_token(token)
-            
+            print(payload)
             if not payload:
                 return None
                 
