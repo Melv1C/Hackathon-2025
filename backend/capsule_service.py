@@ -185,4 +185,37 @@ class CapsuleService:
         except Exception as e:
             logger.error(f"Error retrieving capsule content: {e}")
             return Error(f"Error retrieving capsule content: {str(e)}")
+    
+    def get_capsules(self, user_id):
+        """
+        Get all capsules accessible to a user
+        
+        Args:
+            user_id (str): The ID of the user
+            
+        Returns:
+            list or Error: A list of capsule summaries or an Error object
+        """
+        try:
+            # Get capsules from database
+            capsule = Capsule()
+            capsules = capsule.get_capsules(user_id)
+            
+            if isinstance(capsules, Error):
+                return capsules
                 
+            # Return the list of capsules with basic metadata
+            return [{
+                "id": capsule["_id"],
+                "title": capsule["title"],
+                "unlockDate": capsule["unlock_date"],
+                "isPrivate": capsule["is_private"],
+                "isUnlockable": capsule["is_unlockable"],
+                "ownerId": capsule["owner_id"],
+                "description": capsule.get("description")
+            } for capsule in capsules]
+                
+        except Exception as e:
+            logger.error(f"Error retrieving capsules: {e}")
+            return Error(f"Error retrieving capsules: {str(e)}")
+
