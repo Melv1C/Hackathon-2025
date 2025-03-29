@@ -1,4 +1,4 @@
-import { CreateCapsuleType } from '../schemas/capsule';
+import { CreateCapsuleType, UserCapsulesType } from '../schemas/capsuleSchemas';
 import apiClient from './apiClient';
 
 export const capsuleApi = {
@@ -27,8 +27,8 @@ export const capsuleApi = {
     /**
      * Get all capsules for current user
      */
-    getUserCapsules: async () => {
-        const response = await apiClient.get('/user/capsules');
+    getUserCapsules: async (): Promise<UserCapsulesType> => {
+        const response = await apiClient.get('/capsules');
         return response.data;
     },
 

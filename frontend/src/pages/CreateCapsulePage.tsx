@@ -23,7 +23,10 @@ import { Controller, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { FileUpload } from '../components/ui/FileUpload';
 import { useCapsules } from '../hooks/useCapsules';
-import { CreateCapsuleSchema, CreateCapsuleType } from '../schemas/capsule';
+import {
+    CreateCapsuleSchema,
+    CreateCapsuleType,
+} from '../schemas/capsuleSchemas';
 
 export function CreateCapsulePage() {
     const navigate = useNavigate();
@@ -78,7 +81,7 @@ export function CreateCapsulePage() {
 
             // Optional: Navigate to a success page or capsules list
             setTimeout(() => {
-                navigate('/capsules');
+                navigate('/my-capsules');
             }, 2000);
         }
     }, [isSuccess, navigate, reset]);

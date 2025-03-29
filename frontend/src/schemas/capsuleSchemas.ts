@@ -30,5 +30,31 @@ export const CreateCapsuleSchema = z.object({
     recipients: z.array(z.string().email('Invalid email address')).optional(),
 });
 
+// Schema for a single capsule returned from the API
+export const CapsuleSchema = z.object({
+    id: z.string(),
+    title: z.string(),
+    description: z.string().nullable().optional(),
+    content: CapsuleContentSchema,
+    creationDate: z.string(),
+    unlockDate: z.string(),
+    isPrivate: z.boolean(),
+    isUnlocked: z.boolean(),
+    ownerId: z.string(),
+    recipients: z.array(z.string().email()).optional(),
+});
+
+// Compact schema for the list of user's capsules
+export const UserCapsulesSchema = z.array(
+    CapsuleSchema.pick({
+        id: true,
+        title: true,
+        unlockDate: true,
+        isUnlocked: true,
+    })
+);
+
 export type CapsuleContent = z.infer<typeof CapsuleContentSchema>;
 export type CreateCapsuleType = z.infer<typeof CreateCapsuleSchema>;
+export type CapsuleType = z.infer<typeof CapsuleSchema>;
+export type UserCapsulesType = z.infer<typeof UserCapsulesSchema>;

@@ -1,6 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { capsuleApi } from '../api/capsuleApi';
-import { CreateCapsuleType } from '../schemas/capsule';
+import {
+    CapsuleType,
+    CreateCapsuleType,
+    UserCapsulesType,
+} from '../schemas/capsuleSchemas';
 
 export const useCapsules = () => {
     const queryClient = useQueryClient();
@@ -25,7 +29,7 @@ export const useCapsules = () => {
      * Hook to fetch all capsules for the current user
      */
     const useUserCapsules = () => {
-        return useQuery({
+        return useQuery<UserCapsulesType>({
             queryKey: ['userCapsules'],
             queryFn: capsuleApi.getUserCapsules,
         });
@@ -35,7 +39,7 @@ export const useCapsules = () => {
      * Hook to fetch a specific capsule by ID
      */
     const useCapsule = (capsuleId: string | undefined) => {
-        return useQuery({
+        return useQuery<CapsuleType>({
             queryKey: ['capsule', capsuleId],
             queryFn: () =>
                 capsuleId
