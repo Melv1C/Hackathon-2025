@@ -2,3 +2,4 @@ pip install flask
 pip install dotenv
 pip install cryptography
 pip install IPFS-Toolkit
+pip install flask_cors
