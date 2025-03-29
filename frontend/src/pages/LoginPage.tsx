@@ -13,15 +13,16 @@ import {
     TextField,
     Typography,
 } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { LoginUserSchema, LoginUserType } from '../schemas/authSchemas';
 
 export function LoginPage() {
     const navigate = useNavigate();
-    const { loginUser, error, loginStatus } = useAuth();
+    const location = useLocation();
+    const { loginUser, error, loginStatus, isAuthenticated } = useAuth();
     const [showPassword, setShowPassword] = useState(false);
 
     const {
@@ -49,6 +50,16 @@ export function LoginPage() {
     const toggleShowPassword = () => setShowPassword((prev) => !prev);
 
     const isLoading = loginStatus === 'pending';
+
+    // Get the intended destination from location state, or default to homepage
+    const from = location.state?.from?.pathname || '/';
+
+    // Redirect to intended destination if already authenticated
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigate(from, { replace: true });
+        }
+    }, [isAuthenticated, navigate, from]);
 
     return (
         <Container maxWidth="sm" sx={{ py: 8 }}>
