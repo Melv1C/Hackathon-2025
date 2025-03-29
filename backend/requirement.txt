@@ -1,6 +1,6 @@
 Flask==3.1.0
-dotenv==0.9.9
-pip install cryptography
-pip install IPFS-Toolkit
-pip install flask_cors
-pip install jwt
+python-dotenv==0.9.9
+cryptography
+ipfs-toolkit
+flask-cors
+pyjwt

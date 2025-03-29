@@ -5,6 +5,7 @@ import { MainLayout } from '../components/layouts/MainLayout';
 import { CreateCapsulePage } from '../pages/CreateCapsulePage';
 import { HomePage } from '../pages/HomePage';
 import { LoginPage } from '../pages/LoginPage';
+import { ProfilePage } from '../pages/ProfilePage';
 import { RegisterPage } from '../pages/RegisterPage';
 
 export const routes: RouteObject[] = [
@@ -21,6 +22,14 @@ export const routes: RouteObject[] = [
                 element: (
                     <ProtectedRoute>
                         <CreateCapsulePage />
+                    </ProtectedRoute>
+                ),
+            },
+            {
+                path: 'profile',
+                element: (
+                    <ProtectedRoute>
+                        <ProfilePage />
                     </ProtectedRoute>
                 ),
             },

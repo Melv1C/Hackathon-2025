@@ -18,6 +18,28 @@ capsule_service = CapsuleService(encryption_key)
 
 auth_service = AuthService()
 
+@capsule_bp.route('/capsules', methods=['get'])
+def get_capsules():
+    """Get all capsules for a user"""
+    try:
+        # Verify authentication
+        user_id = auth_service.get_user_id_from_request(request=request)
+        
+        if not user_id:
+            return jsonify({"error": "Authentication required"}), 401
+        
+        # Get capsules
+        result = capsule_service.get_capsules(user_id)
+        
+        if isinstance(result, Error):
+            return jsonify(result.to_dict()), 404 if "not found" in str(result) else 403
+            
+        return jsonify(result), 200
+        
+    except Exception as e:
+        logger.error(f"Error retrieving capsules: {e}")
+        return jsonify({"error": "An error occurred while retrieving capsules"}), 500
+
 @capsule_bp.route('/capsules', methods=['POST'])
 def create_capsule():
     """Create a new time capsule"""
@@ -61,4 +83,5 @@ def get_capsule(capsule_id):
     except Exception as e:
         logger.error(f"Error retrieving capsule: {e}")
         return jsonify({"error": "An error occurred while retrieving capsule"}), 500
+    
 
