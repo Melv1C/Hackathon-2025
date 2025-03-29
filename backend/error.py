@@ -1,4 +1,3 @@
-
 class Error:
     def __init__(self, message, code=None):
         self.message = message
