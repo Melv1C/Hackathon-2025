@@ -6,6 +6,7 @@ from capsule import Capsule
 from error import Error
 from encryption import encrypt_message, decrypt_message
 import ipfs_api
+import datetime
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -56,6 +57,9 @@ class CapsuleService:
                 "iv": iv.hex(),
                 "content": encrypted_content.hex()
             }
+
+            res = decrypt_message(iv, encrypted_content, self.encryption_key)
+            
             
             # Convert to JSON and then to bytes for IPFS storage
             storage_json = json.dumps(storage_obj).encode('utf-8')
@@ -106,4 +110,79 @@ class CapsuleService:
         except Exception as e:
             logger.error(f"Error creating capsule: {e}")
             return Error(f"Error creating capsule: {str(e)}")
+        
+
+    def get_capsule(self, capsule_id, user_id=None):
+        """
+        Retrieve a capsule by its ID
+        
+        Args:
+            capsule_id (str): The ID of the capsule to retrieve
+            user_id (str): The ID of the user requesting the capsule
             
+        Returns:
+            dict or Error: The capsule content or an Error object
+        """
+        # Get the capsule from the database
+        capsule = Capsule().get_by_id(capsule_id, user_id)
+
+        if isinstance(capsule, Error):
+            return capsule
+        
+        # Check unlock date
+        """if capsule["unlock_date"] > datetime.datetime.now():
+            return {
+                    "id": capsule_id,
+                    "title": capsule["title"],
+                    "content": None,
+                    #"description": capsule["description"],
+                    "unlockDate": capsule["unlock_date"],
+                    "isPrivate": capsule["is_private"],
+                    "ownerId": capsule["owner_id"]
+                }"""
+        
+        # Get the content from IPFS using the CID
+        try:
+            # Download the file from IPFS
+            temp_file_path = "temp_file.json"
+            ipfs_api.download(capsule["content"], temp_file_path)
+
+            # Read the downloaded file
+            with open(temp_file_path, "r") as f:
+                encrypted_data = f.read()
+
+            # Clean up the temporary file
+            os.remove(temp_file_path)
+                
+            if not encrypted_data:
+                return {Error("Impossible de retirer la capsule de IPVS")}
+                
+            # on transforme le json en dico
+            storage_obj = json.loads(encrypted_data)
+
+            # Convert hex strings back to bytes
+            iv = bytes.fromhex(storage_obj["iv"])
+
+            encrypted_content = bytes.fromhex(storage_obj["content"])          
+        
+            # Decrypt the content
+            decrypted_content = decrypt_message(iv, encrypted_content, self.encryption_key)
+                
+            # Parse the decrypted JSON content
+            content_data = json.loads(decrypted_content.decode('utf-8'))
+                
+            # Return the complete capsule data
+            return {
+                "id": capsule_id,
+                "title": capsule["title"],
+                "content": content_data,
+                #"description": capsule["description"],
+                "unlockDate": capsule["unlock_date"],
+                "isPrivate": capsule["is_private"],
+                "ownerId": capsule["owner_id"]
+            }
+                
+        except Exception as e:
+            logger.error(f"Error retrieving capsule content: {e}")
+            return Error(f"Error retrieving capsule content: {str(e)}")
+                

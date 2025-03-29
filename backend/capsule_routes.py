@@ -48,6 +48,7 @@ def get_capsule(capsule_id):
     try:
         # Get user_id from token (if authenticated)
         user_id = auth_service.get_user_id_from_request(request=request)
+
         
         # Get capsule
         result = capsule_service.get_capsule(capsule_id, user_id)
