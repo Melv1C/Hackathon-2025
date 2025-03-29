@@ -1,4 +1,4 @@
-import { CreateCapsuleType, UserCapsulesType } from '../schemas/capsuleSchemas';
+import { CapsuleSchema, CreateCapsuleType, UserCapsulesSchema, UserCapsulesType } from '../schemas/capsuleSchemas';
 import apiClient from './apiClient';
 
 export const capsuleApi = {
@@ -21,7 +21,7 @@ export const capsuleApi = {
     getCapsule: async (id: string) => {
         const response = await apiClient.get(`/capsules/${id}`);
         // Handle response data which might contain base64 file content
-        return response.data;
+        return CapsuleSchema.parse(response.data);
     },
 
     /**
@@ -29,7 +29,7 @@ export const capsuleApi = {
      */
     getUserCapsules: async (): Promise<UserCapsulesType> => {
         const response = await apiClient.get('/capsules');
-        return response.data;
+        return UserCapsulesSchema.parse(response.data);
     },
 
     /**

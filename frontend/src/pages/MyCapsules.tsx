@@ -40,6 +40,8 @@ export function MyCapsules() {
     const { useUserCapsules } = useCapsules();
     const { data: userCapsules, isLoading, error } = useUserCapsules();
 
+    console.log('userCapsules', userCapsules);
+
     // Handle tab change
     const handleTabChange = (
         _event: React.SyntheticEvent,
@@ -119,7 +121,7 @@ export function MyCapsules() {
                                 Your Capsule Collection
                             </Typography>
                             <Typography variant="body1">
-                                You have created {totalCapsules} time{' '}
+                                You have {totalCapsules} time{' '}
                                 {totalCapsules === 1 ? 'capsule' : 'capsules'}{' '}
                                 in total
                             </Typography>

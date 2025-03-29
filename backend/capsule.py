@@ -149,14 +149,14 @@ class Capsule:
             
             # Check if the capsule is unlockable
             now = datetime.datetime.now()
-            is_unlockable = now >= capsule["unlock_date"]
+            is_unlocked = now >= capsule["unlock_date"]
             
             # Check access permissions
-            if not is_unlockable and (capsule["is_private"] and user_id != capsule["owner_id"]):
+            if not is_unlocked and (capsule["is_private"] and user_id != capsule["owner_id"]):
                 return Error("Access denied: This capsule is private and not yet unlockable")
             
             # Add unlockable status to the response
-            capsule["is_unlockable"] = is_unlockable
+            capsule["is_unlocked"] = is_unlocked
             
             # Convert ObjectId to string for JSON serialization
             capsule["_id"] = str(capsule["_id"])
@@ -299,8 +299,8 @@ class Capsule:
             now = datetime.datetime.now()
             
             for capsule in cursor:
-                # Add unlockable status
-                capsule["is_unlockable"] = now >= capsule["unlock_date"]
+                # Add unlocked status
+                capsule["is_unlocked"] = now >= capsule["unlock_date"]
                 # Convert ObjectId to string for JSON serialization
                 capsule["_id"] = str(capsule["_id"])
                 capsules.append(capsule)

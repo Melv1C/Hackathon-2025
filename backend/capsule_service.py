@@ -133,17 +133,20 @@ class CapsuleService:
             return capsule
         
         # Check unlock date
-        """if capsule["unlock_date"] > datetime.datetime.now():
+        if capsule["unlock_date"] > datetime.datetime.now():
             return {
-                    "id": capsule_id,
-                    "title": capsule["title"],
-                    "content": None,
-                    "description": capsule["description"],
-                    "unlockDate": capsule["unlock_date"],
-                    "isPrivate": capsule["is_private"],
-                    "ownerId": capsule["owner_id"]
-                    "recipients": capsule["recipients"],
-                }"""
+                "id": capsule_id,
+                "title": capsule["title"],
+                "content": None,
+                "description": capsule["description"],
+                "unlockDate": capsule["unlock_date"],
+                "isPrivate": capsule["is_private"],
+                "ownerId": capsule["owner_id"],
+                "recipients": capsule["recipients"],
+                "creationDate": capsule["created_at"],
+                "isUnlocked": capsule["is_unlocked"]
+            }
+        
         
         # Get the content from IPFS using the CID
         try:
@@ -180,11 +183,13 @@ class CapsuleService:
                 "id": capsule_id,
                 "title": capsule["title"],
                 "content": content_data,
-                "description": capsule["description"],
+                "description": capsule.get("description", ""),
                 "unlockDate": capsule["unlock_date"],
                 "isPrivate": capsule["is_private"],
                 "ownerId": capsule["owner_id"],
-                "recipients": capsule.get("recipients",None)
+                "recipients": capsule.get("recipients", []),
+                "creationDate": capsule["created_at"],
+                "isUnlocked": capsule["is_unlocked"]
             }
                 
         except Exception as e:
@@ -215,7 +220,7 @@ class CapsuleService:
                 "title": capsule["title"],
                 "unlockDate": capsule["unlock_date"],
                 "isPrivate": capsule["is_private"],
-                "isUnlockable": capsule["is_unlockable"],
+                "isUnlocked": capsule["is_unlocked"],
                 "ownerId": capsule["owner_id"],
                 "description": capsule.get("description")
             } for capsule in capsules]

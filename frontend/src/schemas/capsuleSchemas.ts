@@ -39,7 +39,7 @@ export const CapsuleSchema = z.object({
     creationDate: z.string(),
     unlockDate: z.string(),
     isPrivate: z.boolean(),
-    isUnlocked: z.boolean(),
+    isUnlocked: z.boolean().default(true),
     ownerId: z.string(),
     recipients: z.array(z.string().email()).optional(),
 });
