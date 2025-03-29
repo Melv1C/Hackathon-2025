@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 def get_unlockable_capsules():
-    collection = db.get_collection()
+    collection = db.get_collection("capsules")
     if collection is None:
         logger.error("Database connection not established")
         return Error("Database connection error")
