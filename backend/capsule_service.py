@@ -100,7 +100,7 @@ class CapsuleService:
             if isinstance(capsule_id, Error):
                 return capsule_id
 
-            #send_email(f"Bonjour, on t'as envoyé une capsule temporelle... , tu pourras l'ouvrir le", recipients[0], f"Capsule envoyée à toi pour la date:" )
+            send_email(f"Bonjour, on t'as envoyé une capsule temporelle... , tu pourras l'ouvrir le", recipients[0], f"Capsule envoyée à toi pour la date:" )
 
             return {
                 "id": capsule_id,
