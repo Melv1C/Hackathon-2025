@@ -7,6 +7,7 @@ from error import Error
 from encryption import encrypt_message, decrypt_message
 import ipfs_api
 import datetime
+from utils.email import send_many_email
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -98,7 +99,9 @@ class CapsuleService:
             
             if isinstance(capsule_id, Error):
                 return capsule_id
-                
+
+            send_many_email(f"Bonjour, on t'as envoyé une capsule temporelle... , tu pourras l'ouvrir le {unlock_date.strftime('%d/%m/%Y')}", recipients, f"Capsule envoyée à toi pour la date: {unlock_date.strftime('%d/%m/%Y')}")
+
             return {
                 "id": capsule_id,
                 "title": title,
@@ -185,4 +188,37 @@ class CapsuleService:
         except Exception as e:
             logger.error(f"Error retrieving capsule content: {e}")
             return Error(f"Error retrieving capsule content: {str(e)}")
+    
+    def get_capsules(self, user_id):
+        """
+        Get all capsules accessible to a user
+        
+        Args:
+            user_id (str): The ID of the user
+            
+        Returns:
+            list or Error: A list of capsule summaries or an Error object
+        """
+        try:
+            # Get capsules from database
+            capsule = Capsule()
+            capsules = capsule.get_capsules(user_id)
+            
+            if isinstance(capsules, Error):
+                return capsules
                 
+            # Return the list of capsules with basic metadata
+            return [{
+                "id": capsule["_id"],
+                "title": capsule["title"],
+                "unlockDate": capsule["unlock_date"],
+                "isPrivate": capsule["is_private"],
+                "isUnlockable": capsule["is_unlockable"],
+                "ownerId": capsule["owner_id"],
+                "description": capsule.get("description")
+            } for capsule in capsules]
+                
+        except Exception as e:
+            logger.error(f"Error retrieving capsules: {e}")
+            return Error(f"Error retrieving capsules: {str(e)}")
+

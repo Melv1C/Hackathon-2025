@@ -142,3 +142,4 @@ class AuthService:
         except Exception as e:
             logger.error(f"Error extracting user ID from request: {e}")
             return None
+        

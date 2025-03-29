@@ -3,6 +3,7 @@ from bson import ObjectId
 import datetime
 from mongodb import db
 from error import Error
+from user import User
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -233,3 +234,61 @@ class Capsule:
         except Exception as e:
             logger.error(f"Error deleting capsule: {e}")
             return Error(f"Error deleting capsule: {str(e)}")
+    
+    def get_capsules(self, user_id):
+        """
+        Retrieve all capsules that are:
+        1. Public (is_private = false), OR
+        2. Owned by the user (owner_id = user_id), OR
+        3. User's email is in the recipients list
+        
+        Args:
+            user_id (str): The ID of the user
+            
+        Returns:
+            list or Error: A list of capsule documents or an Error object
+        """
+        if not user_id:
+            return Error("User ID is required")
+        
+        collection = db.get_collection(self.collection_name)
+        if collection is None:
+            logger.error("Database connection not established")
+            return Error("Database connection error")
+        
+        try:
+            # Get user's email for recipient matching
+            user_data = User.get_by_id(user_id)
+            if not user_data:
+                return Error("User not found")
+            
+            user_email = user_data.get("email")
+            
+            # Create query to match any of our criteria
+            query = {
+                "$or": [
+                    {"is_private": False},  # Public capsules
+                    {"owner_id": user_id},  # User's own capsules
+                    {"recipients": user_email}  # Capsules where user is a recipient
+                ],
+                "is_deleted": False  # Don't include deleted capsules
+            }
+            
+            # Execute query
+            cursor = collection.find(query)
+            
+            capsules = []
+            now = datetime.datetime.now()
+            
+            for capsule in cursor:
+                # Add unlockable status
+                capsule["is_unlockable"] = now >= capsule["unlock_date"]
+                # Convert ObjectId to string for JSON serialization
+                capsule["_id"] = str(capsule["_id"])
+                capsules.append(capsule)
+            
+            return capsules
+            
+        except Exception as e:
+            logger.error(f"Error retrieving capsules: {e}")
+            return Error(f"Error retrieving capsules: {str(e)}")
