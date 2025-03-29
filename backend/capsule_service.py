@@ -7,6 +7,7 @@ from error import Error
 from encryption import encrypt_message, decrypt_message
 import ipfs_api
 import datetime
+from utils.email import send_many_email
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -98,7 +99,9 @@ class CapsuleService:
             
             if isinstance(capsule_id, Error):
                 return capsule_id
-                
+
+            send_many_email(f"Bonjour, on t'as envoyé une capsule temporelle... , tu pourras l'ouvrir le {unlock_date.strftime('%d/%m/%Y')}", recipients, f"Capsule envoyée à toi pour la date: {unlock_date.strftime('%d/%m/%Y')}")
+
             return {
                 "id": capsule_id,
                 "title": title,
