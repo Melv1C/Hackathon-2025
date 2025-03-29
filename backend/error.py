@@ -6,7 +6,3 @@ class Error:
 
     def __str__(self):
         return f"Error {self.code}: {self.message}" if self.code else self.message
-
-
-
-

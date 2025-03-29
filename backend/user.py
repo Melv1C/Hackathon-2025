@@ -11,6 +11,43 @@ import datetime
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
+def verify_password(email, password):
+    """Verify if the provided password matches the stored hash for the given email
+    
+    Args:
+        email (str): User's email address
+        password (str): Password to verify
+        
+    Returns:
+        bool: True if password matches, False otherwise
+    """
+    if not email or not password:
+        logger.error("Email and password are required for verification")
+        return False
+    
+    # Get user from database
+    collection = db.get_collection("users")
+    if collection is None:
+        logger.error("Database connection not established")
+        return False
+    
+    user_doc = collection.find_one({"email": email})
+    if not user_doc:
+        logger.error(f"User with email {email} not found")
+        return False
+        
+    # Verify password matches
+    if 'password_hash' not in user_doc or 'salt' not in user_doc:
+        logger.error("User document is missing password hash or salt")
+        return False
+        
+    # Hash the provided password with the stored salt
+    salt = user_doc['salt']
+    hashed_password = hashlib.sha256((password + salt).encode()).hexdigest()
+    
+    # Compare the newly generated hash with the stored hash
+    return hashed_password == user_doc['password_hash']
+
 class User:
     def __init__(self, email=None, password=None):
         self.email = email
