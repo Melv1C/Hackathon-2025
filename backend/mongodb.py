@@ -95,7 +95,7 @@ class MongoDBConnection:
                 return []
         return []
 
-        
+# Create a singleton instance
 db = MongoDBConnection(
     host=os.getenv('MONGODB_HOST', 'localhost'),
     port=int(os.getenv('MONGODB_PORT', 27017)),

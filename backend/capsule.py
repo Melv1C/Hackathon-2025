@@ -1,7 +1,7 @@
 import logging
 from bson import ObjectId
 import datetime
-from mongodb_connection import db
+from mongodb import db
 from error import Error
 
 # Configure logging
@@ -12,7 +12,7 @@ class Capsule:
     """
     Class representing a time capsule with the following properties:
     - title: The title of the capsule
-    - content: The encrypted content of the capsule
+    - content: The encrypted content of the capsule (IPFS CID)
     - unlock_date: The date when the capsule can be opened
     - is_private: Whether the capsule is private or not
     - description: Optional description of the capsule
@@ -37,13 +37,13 @@ class Capsule:
             except Exception as e:
                 logger.error(f"Error creating indexes: {e}")
     
-    def create(self, title, unlock_date, is_private, owner_id, description=None, recipients=None):
+    def create(self, title, content, unlock_date, is_private, owner_id, description=None, recipients=None):
         """
         Create a new time capsule
         
         Args:
             title (str): The title of the capsule
-            content (str): The encrypted content of the capsule
+            content (str): The IPFS CID of the encrypted content
             unlock_date (str): The date when the capsule can be opened (ISO format)
             is_private (bool): Whether the capsule is private or not
             owner_id (str): The user ID of the capsule creator
@@ -75,6 +75,7 @@ class Capsule:
             # Create capsule document
             capsule_doc = {
                 "title": title,
+                "content": content,  # IPFS CID of encrypted content
                 "unlock_date": unlock_datetime,
                 "is_private": is_private,
                 "owner_id": owner_id,
