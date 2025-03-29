@@ -12,10 +12,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(level
 logger = logging.getLogger(__name__)
 
 class User:
-    def __init__(self, email=None, password=None, name=None):
-        self.email = email
-        self.password = password
-        self.name = name
+    def __init__(self):
         self.collection_name = "users"
         
         # Create indexes if not exists
@@ -40,14 +37,14 @@ class User:
         hashed_password = hashlib.sha256((password + salt).encode()).hexdigest()
         return {'hash': hashed_password, 'salt': salt}
     
-    def create(self):
+    def create(self, email, password, name=None):
         """
         Create a new user
         
         Returns:
             str or Error: User ID if successful, Error object otherwise
         """
-        if not self.email or not self.password:
+        if not email or not password:
             logger.error("Email and password are required to create a user")
             return Error("Email and password are required")
         
@@ -55,16 +52,16 @@ class User:
         if collection is not None:
             try:
                 # Check if user already exists
-                existing_user = collection.find_one({"email": self.email})
+                existing_user = collection.find_one({"email": email})
                 if existing_user:
                     return Error("User already exists")
                 
                 # Hash password
-                password_data = self._hash_password(self.password)
+                password_data = self._hash_password(password)
                 
                 # Create user document
                 user_doc = {
-                    "email": self.email,
+                    "email": email,
                     "password_hash": password_data['hash'],
                     "salt": password_data['salt'],
                     "created_at": datetime.datetime.now(),
@@ -72,8 +69,8 @@ class User:
                 }
                 
                 # Add name if provided
-                if self.name:
-                    user_doc["name"] = self.name
+                if name:
+                    user_doc["name"] = name
                 
                 # Insert user into database
                 result = collection.insert_one(user_doc)
@@ -82,7 +79,7 @@ class User:
                 return str(result.inserted_id)
                 
             except DuplicateKeyError:
-                logger.error(f"Duplicate key error: User with email {self.email} already exists")
+                logger.error(f"Duplicate key error: User with email {email} already exists")
                 return Error("User already exists")
             except Exception as e:
                 logger.error(f"Error creating user: {e}")
