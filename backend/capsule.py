@@ -10,7 +10,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(level
 logger = logging.getLogger(__name__)
 
 
-def get_unlockable_capsules(user_email):
+def get_all_capsules():
     collection = db.get_collection()
     if collection is None:
         logger.error("Database connection not established")
@@ -25,7 +25,7 @@ def get_unlockable_capsules(user_email):
         capsule["_id"] = str(capsule["_id"])
         capsules.append(capsule)
 
-    return [cap for cap in capsules if (cap["is_unlockable"] and ((not cap["is_private"] ) or user_email in cap["recipients"]))]
+    return capsules
 
 
 class Capsule:
