@@ -190,8 +190,7 @@ class CapsuleService:
             new_hash = hashlib.sha256(decrypted_content).hexdigest()
             # Parse the decrypted JSON content
             content_data = json.loads(decrypted_content.decode('utf-8'))
-
-            new_hash = hashlib.sha256(content_data).hexdigest()
+            
             # Return the complete capsule data
             return {
                 "id": capsule_id,
