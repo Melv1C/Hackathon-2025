@@ -16,16 +16,16 @@ def get_unlockable_capsules():
         logger.error("Database connection not established")
         return Error("Database connection error")
 
-    capsules = []
     now = datetime.datetime.now()
-    for capsule in collection:
-        # Add unlockable status
-        capsule["is_unlockable"] = now >= capsule["unlock_date"]
-        # Convert ObjectId to string for JSON serialization
-        capsule["_id"] = str(capsule["_id"])
-        capsules.append(capsule)
-
-    return [capsule for capsule in capsules if capsule["is_unlockable"]]
+    # Create query to match any of our criteria
+    query = {
+        "unlock_date": {"$lte": now},  # Unlock date is less than or equal to now
+        "is_deleted": False  # Exclude deleted capsules
+    }
+    
+    # Execute query
+    capsules= collection.find(query)
+    return capsules
 
 class Capsule:
     """

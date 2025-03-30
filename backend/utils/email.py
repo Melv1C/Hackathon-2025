@@ -22,7 +22,7 @@ def send_email(message:str, adress:str, subject = ""):
         server.login(senderemail, password)
         server.sendmail(senderemail, adress, msg.as_string())
 
-def send_many_email(message:str, multiple_adress: [str], subject = ""):
+def send_many_email(message:str, multiple_adress, subject = ""):
     senderemail = "capsuletemporelle2025@gmail.com"
     port = 465
     password = "ncfp ahry kumi xiwv"  # Faudrais pas mettre le mdp mais vsy
