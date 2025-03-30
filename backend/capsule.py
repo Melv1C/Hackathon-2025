@@ -102,7 +102,7 @@ class Capsule:
             except Exception as e:
                 logger.error(f"Error creating indexes: {e}")
     
-    def create(self, title, content, unlock_date, is_private, owner_id, description=None, recipients=None):
+    def create(self, title, content, hash, unlock_date, is_private, owner_id, description=None, recipients=None):
         """
         Create a new time capsule
         
@@ -143,6 +143,7 @@ class Capsule:
             capsule_doc = {
                 "title": title,
                 "content": content,  # IPFS CID of encrypted content
+                "hash": hash,
                 "unlock_date": unlock_datetime,
                 "is_private": is_private,
                 "owner_id": owner_id,
@@ -202,8 +203,8 @@ class Capsule:
             is_unlocked = now >= capsule["unlock_date"]
             
             # Check access permissions
-            if not is_unlocked and (capsule["is_private"] and user_id != capsule["owner_id"]):
-                return Error("Access denied: This capsule is private and not yet unlockable")
+            if capsule["is_private"] and user_id != capsule["owner_id"]:
+                return Error("Access denied: This capsule is private")
             
             # Add unlockable status to the response
             capsule["is_unlocked"] = is_unlocked

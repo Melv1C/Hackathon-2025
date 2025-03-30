@@ -42,6 +42,8 @@ class CapsuleService:
             is_private = data.get("isPrivate", False)
             recipients = data.get("recipients", [])
             content_data = data.get("content")
+
+            hash_value = hash(content_data)
             
             # Validate required fields
             if not title or not content_data or not unlock_date:
@@ -94,7 +96,8 @@ class CapsuleService:
                 is_private=is_private,
                 owner_id=user_id,
                 description=description,
-                recipients=recipients
+                recipients=recipients,
+                hash= hash_value
             )
             
             if isinstance(capsule_id, Error):
@@ -133,16 +136,16 @@ class CapsuleService:
             return capsule
         
         # Check unlock date
-        if capsule["unlock_date"] > datetime.datetime.now():
+        if capsule["is_unlocked"] == False:
             return {
                 "id": capsule_id,
                 "title": capsule["title"],
                 "content": None,
-                "description": capsule["description"],
+                "description": capsule.get("description", ""),
                 "unlockDate": capsule["unlock_date"],
                 "isPrivate": capsule["is_private"],
                 "ownerId": capsule["owner_id"],
-                "recipients": capsule["recipients"],
+                "recipients": capsule.get("recipients", []),
                 "creationDate": capsule["created_at"],
                 "isUnlocked": capsule["is_unlocked"]
             }
@@ -163,7 +166,7 @@ class CapsuleService:
                 
             if not encrypted_data:
                 return {Error("Impossible de retirer la capsule de IPVS")}
-                
+
             # on transforme le json en dico
             storage_obj = json.loads(encrypted_data)
 
@@ -177,6 +180,8 @@ class CapsuleService:
                 
             # Parse the decrypted JSON content
             content_data = json.loads(decrypted_content.decode('utf-8'))
+
+            new_hash = hash(content_data)
                 
             # Return the complete capsule data
             return {
@@ -189,7 +194,8 @@ class CapsuleService:
                 "ownerId": capsule["owner_id"],
                 "recipients": capsule.get("recipients", []),
                 "creationDate": capsule["created_at"],
-                "isUnlocked": capsule["is_unlocked"]
+                "isUnlocked": capsule["is_unlocked"],
+                "hasChanged": new_hash != capsule.get("hash")
             }
                 
         except Exception as e:
