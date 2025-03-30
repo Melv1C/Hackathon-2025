@@ -41,7 +41,7 @@ function TabPanel(props: {
 export function MyCapsules() {
     const [tabValue, setTabValue] = useState(0);
     const { useUserCapsules } = useCapsules();
-    const { data: userCapsules, isLoading, error } = useUserCapsules();
+    const { data: userCapsules, isLoading, error, refetch } = useUserCapsules();
 
     console.log('userCapsules', userCapsules);
 
@@ -79,6 +79,12 @@ export function MyCapsules() {
         : null;
 
     const countdown = useCountdown(nextUnlockDate);
+
+    // Handle countdown completion
+    const handleCountdownComplete = () => {
+        console.log('Countdown completed - refreshing capsules data');
+        refetch();
+    };
 
     if (isLoading) {
         return (
@@ -164,11 +170,13 @@ export function MyCapsules() {
 
                             {nextUnlockCapsule && (
                                 <CountdownTimer
+                                    years={countdown.years}
                                     days={countdown.days}
                                     hours={countdown.hours}
                                     minutes={countdown.minutes}
                                     seconds={countdown.seconds}
                                     title="Time until next unlock:"
+                                    onComplete={handleCountdownComplete}
                                 />
                             )}
                         </Box>
