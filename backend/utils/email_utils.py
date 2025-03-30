@@ -31,13 +31,13 @@ def send_many_email(message: str, multiple_addresses, subject=""):
 
             server.sendmail(sender_email, address, msg.as_string())
 
-def return_email_content(variables=None):
+def return_email_content(filename, variables=None):
     """
     Reads the content of the email from a file.
     Supports both plain text and HTML content.
     """
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    file_path = os.path.join(base_dir, "email_type_content.html")
+    file_path = os.path.join(base_dir, filename)
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
     if variables:
