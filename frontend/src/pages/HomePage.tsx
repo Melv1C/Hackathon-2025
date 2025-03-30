@@ -13,10 +13,12 @@ import {
     useTheme,
 } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 
-export const HomePage = () => {
+export function HomePage() {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+    const { isAuthenticated } = useAuth();
 
     const features = [
         {
@@ -68,7 +70,11 @@ export const HomePage = () => {
                             <Box mt={4}>
                                 <Button
                                     component={RouterLink}
-                                    to="/create"
+                                    to={
+                                        isAuthenticated
+                                            ? '/capsules/create'
+                                            : '/login'
+                                    }
                                     variant="contained"
                                     size="large"
                                     sx={{
@@ -85,7 +91,11 @@ export const HomePage = () => {
                                 </Button>
                                 <Button
                                     component={RouterLink}
-                                    to="/explore"
+                                    to={
+                                        isAuthenticated
+                                            ? '/my-capsules'
+                                            : '/login'
+                                    }
                                     variant="outlined"
                                     size="large"
                                     sx={{
@@ -99,7 +109,7 @@ export const HomePage = () => {
                                         },
                                     }}
                                 >
-                                    Explore Capsules
+                                    My Capsules
                                 </Button>
                             </Box>
                         </Grid>
@@ -262,7 +272,11 @@ export const HomePage = () => {
                             color="primary"
                             size="large"
                             component={RouterLink}
-                            to="/register"
+                            to={
+                                isAuthenticated
+                                    ? '/capsules/create'
+                                    : '/register'
+                            }
                         >
                             Get Started
                         </Button>
@@ -271,4 +285,4 @@ export const HomePage = () => {
             </Box>
         </>
     );
-};
+}

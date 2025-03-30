@@ -28,6 +28,51 @@ def get_unlockable_capsules():
     capsules= collection.find(query)
     return capsules
 
+def update_capsule_attribute(capsule_id, attribute, value):
+    """
+    Update a specific attribute of a capsule in the database.
+
+    Args:
+        capsule_id (str): The ID of the capsule to update.
+        attribute (str): The attribute to update.
+        value (any): The new value for the attribute.
+
+    Returns:
+        bool or Error: True if the update was successful, or an Error object.
+    """
+    if not capsule_id or not attribute:
+        return Error("Capsule ID, User ID, and attribute are required")
+
+    collection = db.get_collection("capsules")
+    if collection is None:
+        logger.error("Database connection not established")
+        return Error("Database connection error")
+
+    try:
+        # Convert string ID to ObjectId
+        obj_id = ObjectId(capsule_id)
+
+        # Check if capsule exists and belongs to the user
+        capsule = collection.find_one({"_id": obj_id, "is_deleted": False})
+        if not capsule:
+            return Error("Capsule not found")
+
+        # Update the specified attribute
+        result = collection.update_one(
+            {"_id": obj_id},
+            {"$set": {attribute: value}}
+        )
+
+        if result.modified_count > 0:
+            logger.info(f"Capsule {capsule_id} updated successfully: {attribute} = {value}")
+            return True
+        else:
+            return Error("Failed to update capsule")
+
+    except Exception as e:
+        logger.error(f"Error updating capsule: {e}")
+        return Error(f"Error updating capsule: {str(e)}")
+
 class Capsule:
     """
     Class representing a time capsule with the following properties:
@@ -121,8 +166,7 @@ class Capsule:
         except Exception as e:
             logger.error(f"Error creating capsule: {e}")
             return Error(f"Error creating capsule: {str(e)}")
-    
-    
+
 
     def get_by_id(self, capsule_id, user_id=None):
         """
@@ -302,10 +346,11 @@ class Capsule:
             cursor = collection.find(query)
             
             capsules = []
-            now = datetime.datetime.now()
+            now = datetime.datetime.now(datetime.timezone.utc)
             
             for capsule in cursor:
                 # Add unlocked status
+                capsule["unlock_date"] = capsule["unlock_date"].replace(tzinfo=datetime.timezone.utc)
                 capsule["is_unlocked"] = now >= capsule["unlock_date"]
                 # Convert ObjectId to string for JSON serialization
                 capsule["_id"] = str(capsule["_id"])

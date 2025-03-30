@@ -1,5 +1,5 @@
-from capsule import get_unlockable_capsules
-from utils.email import send_email
+from capsule import get_unlockable_capsules, update_capsule_attribute
+from utils.email import send_many_email
 
 #verifier toutes les capsules pour éventuellement les envoyer par email
 def periodic_task():
@@ -8,6 +8,5 @@ def periodic_task():
     for caps in capsules_to_send:
         if caps.get("recipients") == None:
             continue
-        for email in caps.get("recipients"):
-            send_email("bien  joudsnjknvx", email, "sujet du mail")
-    
+        send_many_email("bien  joudsnjknvx", caps.get("recipients"), "sujet du mail")
+        update_capsule_attribute(caps["_id"],"email_sent",True)
