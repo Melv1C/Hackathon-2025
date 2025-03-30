@@ -62,7 +62,7 @@ export function CreateCapsulePage() {
                 contentType: 'text',
                 textContent: '',
             },
-            unlockDate: '',
+            unlockDate: new Date(),
             isPrivate: false,
             recipients: [],
         },
@@ -259,11 +259,8 @@ export function CreateCapsulePage() {
                                 <DateTimePicker
                                     label="Unlock Date"
                                     value={field.value ? dayjs(field.value) : null}
-                                    onChange={(newValue) => {
-                                        // Use ISO string format for consistent date handling
-                                        field.onChange(
-                                            newValue ? newValue.toString() : ''
-                                        );
+                                        onChange={(newValue) => {
+                                        field.onChange(newValue ? newValue.toDate() : null);
                                     }}
                                     slotProps={{
                                         textField: {

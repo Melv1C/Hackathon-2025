@@ -20,12 +20,9 @@ export const CreateCapsuleSchema = z.object({
     title: z.string().min(2, 'Title must have at least 2 characters'),
     description: z.string().optional(),
     content: CapsuleContentSchema,
-    unlockDate: z.string().refine((date) => {
-        const selectedDate = new Date(date);
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        return selectedDate >= today;
-    }, 'Unlock date must be in the future'),
+    unlockDate: z.date().refine((date) => date > new Date(), {
+        message: 'Unlock date must be in the future',
+    }),
     isPrivate: z.boolean().default(false),
     recipients: z.array(z.string().email('Invalid email address')).optional(),
 });
@@ -36,9 +33,11 @@ export const CapsuleSchema = z.object({
     title: z.string(),
     description: z.string().nullable().optional(),
     content: CapsuleContentSchema,
-    creationDate: z.string(),
-    unlockDate: z.string(),
-    isPrivate: z.boolean(),
+    creationDate: z.date(),
+    unlockDate: z.date().refine((date) => date > new Date(), {
+        message: 'Unlock date must be in the future',
+    }),
+    isPrivate: z.boolean().default(false),
     isUnlocked: z.boolean().default(true),
     ownerId: z.string(),
     recipients: z.array(z.string().email()).optional(),

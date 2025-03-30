@@ -51,6 +51,8 @@ def create_capsule():
             return jsonify({"error": "Authentication required"}), 401
         # Get request data
         data = request.get_json()
+
+        print(f"Received data: {data}")  # Debugging line
         
         # Create capsule
         result = capsule_service.create_capsule(data, user_id)

@@ -80,7 +80,9 @@ class Capsule:
         # Validate unlock_date format and ensure it's in the future
         try:
             unlock_datetime = datetime.datetime.fromisoformat(unlock_date)
-            if unlock_datetime <= datetime.datetime.now():
+            print(f"Unlock date: {unlock_datetime}")
+            print(f"Current date: {datetime.datetime.now(datetime.timezone.utc)}")
+            if unlock_datetime <= datetime.datetime.now(datetime.timezone.utc):
                 return Error("Unlock date must be in the future")
         except ValueError:
             return Error("Invalid unlock date format. Use ISO format (YYYY-MM-DDTHH:MM:SS)")
