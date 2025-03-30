@@ -11,27 +11,23 @@ def createClient():
         )
 
 def make_prompt(client, content):
-    with open("prompt.txt", "r") as f:
+    with open("utils/prompt.txt", "r") as f:
         prompt = f.read()
-        response = client.chat.completions.create(
-            extra_body={},
-            model="google/gemini-2.5-pro-exp-03-25:free",
-            messages=[
+    prompt = prompt.format(content=content)
+    response = client.chat.completions.create(
+        extra_body={},
+        #model="google/gemini-2.5-pro-exp-03-25:free",
+        model="google/gemini-2.0-flash-exp:free",
+        messages=[
+            {
+            "role": "user",
+            "content": [
                 {
-                "role": "user",
-                "content": [
-                    {
-                    "type": "text",
-                    "text": prompt
-                    }
-                    # {
-                    # "type": "image_url",
-                    # "image_url": {
-                    #     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"
-                    # }
-                    # }
-                ]
+                "type": "text",
+                "text": prompt
                 }
             ]
-        )
+            }
+        ]
+    )
     return response.choices[0].message.content

@@ -7,7 +7,7 @@ from error import Error
 from encryption import encrypt_message, decrypt_message
 import ipfs_api
 import datetime
-from utils.email_utils import send_many_email, send_email
+from utils.email_utils import send_many_email, send_email, return_email_content
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -43,7 +43,6 @@ class CapsuleService:
             recipients = data.get("recipients", [])
             content_data = data.get("content")
 
-            hash_value = hash(content_data)
             
             # Validate required fields
             if not title or not content_data or not unlock_date:
@@ -51,6 +50,8 @@ class CapsuleService:
                 
             # Prepare content for storage
             json_content = json.dumps(content_data).encode('utf-8')
+
+            hash_value = hash(json_content)
             
             # Encrypt the content
             iv, encrypted_content = encrypt_message(json_content, self.encryption_key)
@@ -103,7 +104,7 @@ class CapsuleService:
             if isinstance(capsule_id, Error):
                 return capsule_id
 
-            send_many_email(f"Bonjour, on t'as envoyé une capsule temporelle... , tu pourras l'ouvrir le", recipients, f"Capsule envoyée à toi pour la date:" )
+            send_many_email(return_email_content(), recipients, "On t'as envoyé une capsule !" )
 
             return {
                 "id": capsule_id,
