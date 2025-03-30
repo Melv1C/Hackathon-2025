@@ -16,14 +16,16 @@ aiClient = createClient()
 @ai_bp.route('/analyse', methods=['POST'])
 def process_ai_request():
     """Process AI request with provided data"""
-    try:           
+    try:
         # Get request data
         data = request.get_json()
+
+        content = data.get('content')
         
         logger.info(f"Received AI processing request: {data}")
         
         # Process data with AI service
-        result = make_prompt(aiClient, data)
+        result = make_prompt(aiClient, content)
         
         if isinstance(result, Error):
             return jsonify(result.to_dict()), 400

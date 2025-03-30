@@ -5,6 +5,7 @@ from flask_cors import CORS
 from dotenv import load_dotenv
 from capsule_routes import capsule_bp
 from auth_routes import auth_bp
+from ai_routes import ai_bp
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 import atexit
@@ -30,6 +31,7 @@ def create_app(test_config=None):
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(capsule_bp)
+    app.register_blueprint(ai_bp)
 
     @app.errorhandler(404)
     def not_found(error):
