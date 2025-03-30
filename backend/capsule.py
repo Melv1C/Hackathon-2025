@@ -202,8 +202,8 @@ class Capsule:
             is_unlocked = now >= capsule["unlock_date"]
             
             # Check access permissions
-            if not is_unlocked and (capsule["is_private"] and user_id != capsule["owner_id"]):
-                return Error("Access denied: This capsule is private and not yet unlockable")
+            if capsule["is_private"] and user_id != capsule["owner_id"]:
+                return Error("Access denied: This capsule is private")
             
             # Add unlockable status to the response
             capsule["is_unlocked"] = is_unlocked

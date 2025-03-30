@@ -133,16 +133,16 @@ class CapsuleService:
             return capsule
         
         # Check unlock date
-        if capsule["unlock_date"] > datetime.datetime.now():
+        if capsule["is_unlocked"] == False:
             return {
                 "id": capsule_id,
                 "title": capsule["title"],
                 "content": None,
-                "description": capsule["description"],
+                "description": capsule.get("description", ""),
                 "unlockDate": capsule["unlock_date"],
                 "isPrivate": capsule["is_private"],
                 "ownerId": capsule["owner_id"],
-                "recipients": capsule["recipients"],
+                "recipients": capsule.get("recipients", []),
                 "creationDate": capsule["created_at"],
                 "isUnlocked": capsule["is_unlocked"]
             }
