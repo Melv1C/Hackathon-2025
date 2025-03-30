@@ -16,7 +16,7 @@ def get_unlockable_capsules():
         logger.error("Database connection not established")
         return Error("Database connection error")
 
-    now = datetime.datetime.now()
+    now = datetime.datetime.now(datetime.timezone.utc)
     # Create query to match any of our criteria
     query = {
         "unlock_date": {"$lte": now},  # Unlock date is less than or equal to now
