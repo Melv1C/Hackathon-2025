@@ -46,10 +46,6 @@ class CapsuleService:
             recipients = data.get("recipients", [])
             content_data = data.get("content")
 
-            #Ajout du owner dans les récipients
-            user = User.get_by_id(user_id)
-            mail = user["email"]
-            recipients.append(mail)
 
             # Validate required fields
             if not title or not content_data or not unlock_date:

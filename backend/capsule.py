@@ -139,6 +139,10 @@ class Capsule:
             return Error("Database connection error")
         
         try:
+            # Ajout du owner dans les récipients
+            user = User.get_by_id(owner_id)
+            mail = user["email"]
+            recipients.append(mail)
             # Create capsule document
             capsule_doc = {
                 "title": title,
