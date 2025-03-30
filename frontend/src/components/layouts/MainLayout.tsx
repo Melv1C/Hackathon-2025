@@ -111,6 +111,18 @@ export function MainLayout() {
                         </ListItem>
                         <ListItem disablePadding>
                             <ListItemButton
+                                component={RouterLink}
+                                to="/profile"
+                                sx={{ textAlign: 'center' }}
+                            >
+                                <ListItemIcon sx={{ minWidth: 'auto', mr: 1 }}>
+                                    <Avatar sx={{ width: 24, height: 24 }} />
+                                </ListItemIcon>
+                                <ListItemText primary="Profile" />
+                            </ListItemButton>
+                        </ListItem>
+                        <ListItem disablePadding>
+                            <ListItemButton
                                 onClick={handleLogout}
                                 sx={{ textAlign: 'center' }}
                             >

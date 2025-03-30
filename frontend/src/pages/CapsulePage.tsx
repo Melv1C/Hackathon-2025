@@ -2,6 +2,7 @@ import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import LockClockIcon from '@mui/icons-material/LockClock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
+import SmartToyIcon from '@mui/icons-material/SmartToy';
 import {
     Alert,
     Box,
@@ -16,6 +17,8 @@ import {
 } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import { CountdownTimer } from '../components/ui/CountdownTimer';
+import { MarkdownViewer } from '../components/ui/MarkdownViewer';
+import { useAiAnalysis } from '../hooks/useAiAnalysis';
 import { useCapsules } from '../hooks/useCapsules';
 import { useCountdown } from '../hooks/useCountdown';
 
@@ -30,20 +33,26 @@ export function CapsulePage() {
         refetch,
     } = useCapsule(capsuleId);
 
-    // Calculate countdown timer if capsule exists and is locked
+    const { analyzeContent, isAnalyzing, analysisResult, analysisError } =
+        useAiAnalysis();
+
     const unlockDate =
         capsule && !capsule.isUnlocked ? new Date(capsule.unlockDate) : null;
     const countdown = useCountdown(unlockDate);
 
-    // Handle countdown completion
     const handleCountdownComplete = () => {
         console.log('Capsule countdown completed - refreshing capsule data');
         refetch();
     };
 
+    const handleAiAnalysis = () => {
+        if (capsule && capsule.content?.contentType === 'text') {
+            analyzeContent(capsule.content.textContent);
+        }
+    };
+
     console.log('Capsule data:', capsule);
 
-    // Helper function to download file content
     const downloadFile = () => {
         if (
             !capsule ||
@@ -54,7 +63,6 @@ export function CapsulePage() {
 
         const { fileData, fileName, fileType } = capsule.content;
 
-        // Convert base64 to binary using browser APIs
         const binaryString = atob(fileData);
         const bytes = new Uint8Array(binaryString.length);
         for (let i = 0; i < binaryString.length; i++) {
@@ -75,7 +83,6 @@ export function CapsulePage() {
         URL.revokeObjectURL(url);
     };
 
-    // Format date in a user-friendly way
     const formatDate = (date: Date) => {
         const options: Intl.DateTimeFormatOptions = {
             year: 'numeric',
@@ -118,7 +125,6 @@ export function CapsulePage() {
     return (
         <Box sx={{ maxWidth: 800, mx: 'auto', p: 2 }}>
             <Paper elevation={3} sx={{ p: 3, borderRadius: 2 }}>
-                {/* Header with status */}
                 <Box
                     sx={{
                         display: 'flex',
@@ -137,7 +143,6 @@ export function CapsulePage() {
                     />
                 </Box>
 
-                {/* Dates information */}
                 <Box sx={{ display: 'flex', gap: 2, mb: 3, flexWrap: 'wrap' }}>
                     <Chip
                         icon={<CalendarTodayIcon />}
@@ -156,7 +161,6 @@ export function CapsulePage() {
                     />
                 </Box>
 
-                {/* Description if available */}
                 {capsule.description && (
                     <Box sx={{ mb: 3 }}>
                         <Typography
@@ -171,7 +175,6 @@ export function CapsulePage() {
 
                 <Divider sx={{ my: 3 }} />
 
-                {/* Capsule content section */}
                 <Typography variant="h6" component="h2" gutterBottom>
                     Capsule Content
                 </Typography>
@@ -202,7 +205,6 @@ export function CapsulePage() {
                                     flexDirection: 'column',
                                 }}
                             >
-                                {/* Add countdown timer for locked capsules */}
                                 {countdown && (
                                     <CountdownTimer
                                         years={countdown.years}
@@ -220,14 +222,79 @@ export function CapsulePage() {
                 ) : (
                     <Box sx={{ mt: 2 }}>
                         {capsule.content!.contentType === 'text' ? (
-                            <Paper
-                                variant="outlined"
-                                sx={{ p: 3, bgcolor: 'background.paper' }}
-                            >
-                                <Typography sx={{ whiteSpace: 'pre-wrap' }}>
-                                    {capsule.content!.textContent}
-                                </Typography>
-                            </Paper>
+                            <>
+                                <Paper
+                                    variant="outlined"
+                                    sx={{ p: 3, bgcolor: 'background.paper' }}
+                                >
+                                    <Typography sx={{ whiteSpace: 'pre-wrap' }}>
+                                        {capsule.content!.textContent}
+                                    </Typography>
+                                </Paper>
+
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        justifyContent: 'flex-end',
+                                        mt: 2,
+                                    }}
+                                >
+                                    <Button
+                                        variant="outlined"
+                                        startIcon={
+                                            isAnalyzing ? (
+                                                <CircularProgress size={20} />
+                                            ) : (
+                                                <SmartToyIcon />
+                                            )
+                                        }
+                                        onClick={handleAiAnalysis}
+                                        disabled={isAnalyzing}
+                                    >
+                                        {isAnalyzing
+                                            ? 'Analyzing...'
+                                            : 'Ask AI for Context'}
+                                    </Button>
+                                </Box>
+
+                                {analysisResult && (
+                                    <Paper
+                                        variant="outlined"
+                                        sx={{
+                                            p: 3,
+                                            mt: 2,
+                                            bgcolor: 'background.paper',
+                                            borderLeft: 4,
+                                            borderColor: 'primary.main',
+                                        }}
+                                    >
+                                        <Typography
+                                            variant="subtitle1"
+                                            fontWeight="bold"
+                                            gutterBottom
+                                        >
+                                            AI Analysis:
+                                        </Typography>
+                                        <MarkdownViewer
+                                            markdown={analysisResult}
+                                            sx={{
+                                                border: 'none',
+                                                p: 0,
+                                                '& p:first-of-type': { mt: 0 },
+                                            }}
+                                        />
+                                    </Paper>
+                                )}
+
+                                {analysisError && (
+                                    <Alert severity="error" sx={{ mt: 2 }}>
+                                        Error getting AI analysis:{' '}
+                                        {analysisError instanceof Error
+                                            ? analysisError.message
+                                            : 'Unknown error'}
+                                    </Alert>
+                                )}
+                            </>
                         ) : capsule.content!.contentType === 'file' ? (
                             <Card sx={{ mb: 2 }}>
                                 <CardContent>
@@ -260,7 +327,6 @@ export function CapsulePage() {
                     </Box>
                 )}
 
-                {/* Recipients section if applicable */}
                 {capsule.recipients && capsule.recipients.length > 0 && (
                     <Box sx={{ mt: 4 }}>
                         <Typography variant="subtitle1" gutterBottom>
