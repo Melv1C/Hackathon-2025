@@ -35,8 +35,7 @@ export const UserSchema = z.object({
     id: z.string(),
     email: z.string().email(),
     name: z.string(),
-    createdAt: z.string(),
-    updatedAt: z.string(),
+    createdAt: z.string()
 });
 
 // Exported types
