@@ -7,7 +7,7 @@ from error import Error
 from encryption import encrypt_message, decrypt_message
 import ipfs_api
 import datetime
-from backend.utils.email_utils import send_many_email, send_email
+from utils.email_utils import send_many_email, send_email
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')

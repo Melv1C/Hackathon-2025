@@ -1,5 +1,5 @@
 from capsule import get_unlockable_capsules, update_capsule_attribute
-from backend.utils.email_utils import send_many_email
+from utils.email_utils import send_many_email
 
 #verifier toutes les capsules pour éventuellement les envoyer par email
 def periodic_task():
