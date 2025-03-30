@@ -29,7 +29,15 @@ export function CapsulePage() {
         if (!capsule || capsule.content.contentType !== 'file') return;
 
         const { fileData, fileName, fileType } = capsule.content;
-        const blob = new Blob([Buffer.from(fileData, 'base64')], {
+
+        // Convert base64 to binary using browser APIs
+        const binaryString = atob(fileData);
+        const bytes = new Uint8Array(binaryString.length);
+        for (let i = 0; i < binaryString.length; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+        }
+
+        const blob = new Blob([bytes], {
             type: fileType,
         });
         const url = URL.createObjectURL(blob);
@@ -44,15 +52,15 @@ export function CapsulePage() {
     };
 
     // Format date in a user-friendly way
-    const formatDate = (dateString: string) => {
-        const date = new Date(dateString);
-        return date.toLocaleDateString('en-US', {
+    const formatDate = (date: Date) => {
+        const options: Intl.DateTimeFormatOptions = {
             year: 'numeric',
             month: 'long',
             day: 'numeric',
             hour: '2-digit',
             minute: '2-digit',
-        });
+        };
+        return new Date(date).toLocaleDateString('en-US', options);
     };
 
     if (isLoading) {
