@@ -102,7 +102,7 @@ class Capsule:
             except Exception as e:
                 logger.error(f"Error creating indexes: {e}")
     
-    def create(self, title, content, unlock_date, is_private, owner_id, description=None, recipients=None):
+    def create(self, title, content, hash, unlock_date, is_private, owner_id, description=None, recipients=None):
         """
         Create a new time capsule
         
@@ -143,6 +143,7 @@ class Capsule:
             capsule_doc = {
                 "title": title,
                 "content": content,  # IPFS CID of encrypted content
+                "hash": hash,
                 "unlock_date": unlock_datetime,
                 "is_private": is_private,
                 "owner_id": owner_id,
