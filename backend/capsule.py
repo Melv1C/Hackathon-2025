@@ -20,7 +20,8 @@ def get_unlockable_capsules():
     # Create query to match any of our criteria
     query = {
         "unlock_date": {"$lte": now},  # Unlock date is less than or equal to now
-        "is_deleted": False  # Exclude deleted capsules
+        "is_deleted": False,  # Exclude deleted capsules
+        "email_sent": False  # Exclude capsules that have already been sent
     }
     
     # Execute query
@@ -101,7 +102,8 @@ class Capsule:
                 "is_private": is_private,
                 "owner_id": owner_id,
                 "created_at": datetime.datetime.now(),
-                "is_deleted": False
+                "is_deleted": False,
+                "email_sent": False
             }
             
             # Add optional fields if provided
@@ -120,6 +122,8 @@ class Capsule:
             logger.error(f"Error creating capsule: {e}")
             return Error(f"Error creating capsule: {str(e)}")
     
+    
+
     def get_by_id(self, capsule_id, user_id=None):
         """
         Retrieve a capsule by its ID
