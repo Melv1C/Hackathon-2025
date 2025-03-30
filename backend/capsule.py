@@ -139,6 +139,10 @@ class Capsule:
             return Error("Database connection error")
         
         try:
+            # Ajout du owner dans les récipients
+            user = User.get_by_id(owner_id)
+            mail = user["email"]
+            recipients.append(mail)
             # Create capsule document
             capsule_doc = {
                 "title": title,
@@ -199,8 +203,8 @@ class Capsule:
                 return Error("Capsule not found")
             
             # Check if the capsule is unlockable
-            now = datetime.datetime.now()
-            is_unlocked = now >= capsule["unlock_date"]
+            now = datetime.datetime.now(datetime.timezone.utc)
+            is_unlocked = now >= capsule["unlock_date"].replace(tzinfo=datetime.timezone.utc)
             
             # Check access permissions
             if capsule["is_private"] and user_id != capsule["owner_id"]:

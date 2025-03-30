@@ -9,6 +9,7 @@ import ipfs_api
 import datetime
 from utils.email_utils import send_many_email, send_email, return_email_content
 import hashlib
+from user import User
 from dotenv import load_dotenv
 
 # Configure logging
@@ -45,7 +46,7 @@ class CapsuleService:
             recipients = data.get("recipients", [])
             content_data = data.get("content")
 
-            
+
             # Validate required fields
             if not title or not content_data or not unlock_date:
                 return Error("Missing required fields: title, content, and unlockDate are required")
