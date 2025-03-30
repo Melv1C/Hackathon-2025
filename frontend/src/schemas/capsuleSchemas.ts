@@ -39,6 +39,7 @@ export const CapsuleSchema = z.object({
     isUnlocked: z.boolean().default(true),
     ownerId: z.string(),
     recipients: z.array(z.string().email()).optional(),
+    altered: z.boolean().default(false),
 });
 
 // Compact schema for the list of user's capsules
