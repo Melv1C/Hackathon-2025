@@ -1,3 +1,4 @@
+import CollectionsBookmarkIcon from '@mui/icons-material/CollectionsBookmark';
 import LockClockIcon from '@mui/icons-material/LockClock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import {
@@ -13,7 +14,9 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import { CapsuleCard } from '../components/capsules/CapsuleCard';
+import { CountdownTimer } from '../components/ui/CountdownTimer';
 import { useCapsules } from '../hooks/useCapsules';
+import { useCountdown } from '../hooks/useCountdown';
 
 // TabPanel component to handle tab content
 function TabPanel(props: {
@@ -62,16 +65,20 @@ export function MyCapsules() {
     const totalLocked = lockedCapsules.length;
 
     // Find the next capsule to be unlocked
-    const nextUnlock =
+    const nextUnlockCapsule =
         lockedCapsules.length > 0
-            ? new Date(
-                  lockedCapsules.sort(
-                      (a, b) =>
-                          new Date(a.unlockDate).getTime() -
-                          new Date(b.unlockDate).getTime()
-                  )[0].unlockDate
-              ).toLocaleDateString()
-            : 'None';
+            ? lockedCapsules.sort(
+                  (a, b) =>
+                      new Date(a.unlockDate).getTime() -
+                      new Date(b.unlockDate).getTime()
+              )[0]
+            : null;
+
+    const nextUnlockDate = nextUnlockCapsule
+        ? new Date(nextUnlockCapsule.unlockDate)
+        : null;
+
+    const countdown = useCountdown(nextUnlockDate);
 
     if (isLoading) {
         return (
@@ -105,30 +112,64 @@ export function MyCapsules() {
 
             {/* Stats Section */}
             <Paper
-                elevation={2}
+                elevation={3}
                 sx={{
                     p: 3,
                     mb: 4,
                     borderRadius: 2,
-                    background: 'linear-gradient(to right, #8e2de2, #4a00e0)',
+                    background: 'linear-gradient(135deg, #8e2de2, #4a00e0)',
+                    boxShadow:
+                        '0 10px 20px rgba(0,0,0,0.12), 0 4px 8px rgba(0,0,0,0.06)',
+                    overflow: 'hidden',
+                    position: 'relative',
+                    '&::before': {
+                        content: '""',
+                        position: 'absolute',
+                        top: 0,
+                        right: 0,
+                        bottom: 0,
+                        left: 0,
+                        background:
+                            'radial-gradient(circle at top right, rgba(255,255,255,0.15), transparent 70%)',
+                    },
                 }}
             >
                 <Grid container spacing={3}>
                     {/* Total Stats */}
-                    <Grid size={{ xs: 12, md: 6 }}>
+                    <Grid
+                        size={{ xs: 12, md: 6 }}
+                        sx={{ position: 'relative', zIndex: 1 }}
+                    >
                         <Box color="white">
-                            <Typography variant="h5" fontWeight="bold">
-                                Your Capsule Collection
-                            </Typography>
-                            <Typography variant="body1">
-                                You have {totalCapsules} time{' '}
+                            <Box display="flex" alignItems="center" mb={1}>
+                                <CollectionsBookmarkIcon sx={{ mr: 1 }} />
+                                <Typography variant="h5" fontWeight="bold">
+                                    Your Capsule Collection
+                                </Typography>
+                            </Box>
+
+                            <Typography variant="body1" sx={{ mb: 2 }}>
+                                You have{' '}
+                                <Box
+                                    component="span"
+                                    fontWeight="bold"
+                                    fontSize={18}
+                                >
+                                    {totalCapsules}
+                                </Box>{' '}
+                                time{' '}
                                 {totalCapsules === 1 ? 'capsule' : 'capsules'}{' '}
                                 in total
                             </Typography>
-                            {nextUnlock !== 'None' && (
-                                <Typography variant="body2" sx={{ mt: 1 }}>
-                                    Next unlock: {nextUnlock}
-                                </Typography>
+
+                            {nextUnlockCapsule && (
+                                <CountdownTimer
+                                    days={countdown.days}
+                                    hours={countdown.hours}
+                                    minutes={countdown.minutes}
+                                    seconds={countdown.seconds}
+                                    title="Time until next unlock:"
+                                />
                             )}
                         </Box>
                     </Grid>
@@ -139,66 +180,74 @@ export function MyCapsules() {
                             {/* Unlocked Count */}
                             <Grid size={{ xs: 6 }}>
                                 <Card
+                                    elevation={4}
                                     sx={{
                                         p: 2,
                                         height: '100%',
                                         display: 'flex',
+                                        flexDirection: 'column',
                                         alignItems: 'center',
+                                        justifyContent: 'center',
+                                        textAlign: 'center',
                                         backgroundColor:
                                             'rgba(255, 255, 255, 0.9)',
+                                        borderRadius: 2,
+                                        transition: 'transform 0.2s ease',
+                                        '&:hover': {
+                                            transform: 'scale(1.02)',
+                                        },
                                     }}
                                 >
                                     <LockOpenIcon
                                         color="success"
-                                        sx={{ fontSize: 32, mr: 1 }}
+                                        sx={{ fontSize: 40, mb: 1 }}
                                     />
-                                    <Box>
-                                        <Typography
-                                            variant="h4"
-                                            fontWeight="bold"
-                                        >
-                                            {totalUnlocked}
-                                        </Typography>
-                                        <Typography
-                                            variant="body2"
-                                            color="text.secondary"
-                                        >
-                                            Unlocked
-                                        </Typography>
-                                    </Box>
+                                    <Typography variant="h3" fontWeight="bold">
+                                        {totalUnlocked}
+                                    </Typography>
+                                    <Typography
+                                        variant="body1"
+                                        color="text.secondary"
+                                    >
+                                        Unlocked
+                                    </Typography>
                                 </Card>
                             </Grid>
 
                             {/* Locked Count */}
                             <Grid size={{ xs: 6 }}>
                                 <Card
+                                    elevation={4}
                                     sx={{
                                         p: 2,
                                         height: '100%',
                                         display: 'flex',
+                                        flexDirection: 'column',
                                         alignItems: 'center',
+                                        justifyContent: 'center',
+                                        textAlign: 'center',
                                         backgroundColor:
                                             'rgba(255, 255, 255, 0.9)',
+                                        borderRadius: 2,
+                                        transition: 'transform 0.2s ease',
+                                        '&:hover': {
+                                            transform: 'scale(1.02)',
+                                        },
                                     }}
                                 >
                                     <LockClockIcon
                                         color="error"
-                                        sx={{ fontSize: 32, mr: 1 }}
+                                        sx={{ fontSize: 40, mb: 1 }}
                                     />
-                                    <Box>
-                                        <Typography
-                                            variant="h4"
-                                            fontWeight="bold"
-                                        >
-                                            {totalLocked}
-                                        </Typography>
-                                        <Typography
-                                            variant="body2"
-                                            color="text.secondary"
-                                        >
-                                            Locked
-                                        </Typography>
-                                    </Box>
+                                    <Typography variant="h3" fontWeight="bold">
+                                        {totalLocked}
+                                    </Typography>
+                                    <Typography
+                                        variant="body1"
+                                        color="text.secondary"
+                                    >
+                                        Locked
+                                    </Typography>
                                 </Card>
                             </Grid>
                         </Grid>

@@ -29,7 +29,10 @@ export const capsuleApi = {
      */
     getUserCapsules: async (): Promise<UserCapsulesType> => {
         const response = await apiClient.get('/capsules');
-        return UserCapsulesSchema.parse(response.data);
+        console.log('User capsules response:', response.data);
+        const test = UserCapsulesSchema.parse(response.data);
+        console.log('Parsed user capsules:', test);
+        return test;
     },
 
     /**
