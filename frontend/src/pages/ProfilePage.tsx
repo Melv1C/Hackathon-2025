@@ -24,7 +24,7 @@ export const ProfilePage = () => {
                 }}
             >
                 <Grid container spacing={3} alignItems="center">
-                    <Grid size="auto">
+                    <Grid size={{ xs: 12, md: 4 }} textAlign="center">
                         <Avatar
                             alt={user?.name || 'User'}
                             sx={{
@@ -37,7 +37,7 @@ export const ProfilePage = () => {
                             {user?.name?.charAt(0) || 'U'}
                         </Avatar>
                     </Grid>
-                    <Grid size="grow">
+                    <Grid size={{ xs: 12, md: 8 }} textAlign="left">
                         <Typography variant="h4" fontWeight="bold">
                             {user?.name || 'User Profile'}
                         </Typography>
@@ -51,7 +51,7 @@ export const ProfilePage = () => {
                                 : 'Unknown'}
                         </Typography>
                     </Grid>
-                    <Grid size="auto">
+                    <Grid size={{ xs: 12, md: 12 }} textAlign="center" sx={{ mt: 3 }}>
                         <Button
                             variant="contained"
                             color="secondary"
