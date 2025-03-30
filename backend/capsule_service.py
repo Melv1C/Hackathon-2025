@@ -194,7 +194,7 @@ class CapsuleService:
                 "recipients": capsule.get("recipients", []),
                 "creationDate": capsule["created_at"],
                 "isUnlocked": capsule["is_unlocked"],
-                "hasChanged": new_hash != capsule.get("hash")
+                "altered": capsule["hash"] != new_hash,
             }
                 
         except Exception as e:

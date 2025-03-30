@@ -176,6 +176,13 @@ export function CapsulePage() {
                     Capsule Content
                 </Typography>
 
+                {/* Warning for potentially altered content */}
+                {capsule.altered && (
+                    <Alert severity="warning" sx={{ mb: 2 }}>
+                        This capsule's content may have been altered since creation.
+                    </Alert>
+                )}
+
                 {!isUnlocked ? (
                     <Card
                         sx={{
