@@ -56,8 +56,6 @@ def create_app(test_config=None):
 
     atexit.register(lambda: scheduler.shutdown())
 
-    aiClient = createClient()
-
     return app
 
 if __name__ == '__main__':

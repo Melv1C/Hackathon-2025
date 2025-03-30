@@ -10,29 +10,28 @@ def createClient():
         api_key=api,
         )
 
-def make_prompt(client):
-    return client.chat.completions.create(
-        extra_body={},
-        model="google/gemini-2.5-pro-exp-03-25:free",
-        messages=[
-            {
-            "role": "user",
-            "content": [
+def make_prompt(client, content):
+    with open("prompt.txt", "r") as f:
+        prompt = f.read()
+        response = client.chat.completions.create(
+            extra_body={},
+            model="google/gemini-2.5-pro-exp-03-25:free",
+            messages=[
                 {
-                "type": "text",
-                "text": "What is in this image?"
-                },
-                {
-                "type": "image_url",
-                "image_url": {
-                    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"
-                }
+                "role": "user",
+                "content": [
+                    {
+                    "type": "text",
+                    "text": prompt
+                    }
+                    # {
+                    # "type": "image_url",
+                    # "image_url": {
+                    #     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"
+                    # }
+                    # }
+                ]
                 }
             ]
-            }
-        ]
         )
-if __name__ == "__main__":
-    client = createClient()
-    response = make_prompt(client)
-    print(response)
+    return response.choices[0].message.content
