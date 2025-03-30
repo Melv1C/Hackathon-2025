@@ -51,7 +51,6 @@ class CapsuleService:
                 
             # Prepare content for storage
             json_content = json.dumps(content_data).encode('utf-8')
-            print(json_content)
             hash_value = hashlib.sha256(json_content).hexdigest()
             
             # Encrypt the content
@@ -183,11 +182,6 @@ class CapsuleService:
             new_hash = hashlib.sha256(decrypted_content).hexdigest()
             # Parse the decrypted JSON content
             content_data = json.loads(decrypted_content.decode('utf-8'))
-            print(decrypted_content)
-            print(capsule)
-            print(capsule.get("hash"))
-            print(new_hash)
-            print(new_hash != capsule.get("hash"))
             # Return the complete capsule data
             return {
                 "id": capsule_id,
