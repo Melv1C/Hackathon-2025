@@ -19,13 +19,9 @@ def process_ai_request():
     try:
         # Get request data
         data = request.get_json()
-
-        content = data.get('content')
-        
-        logger.info(f"Received AI processing request: {data}")
         
         # Process data with AI service
-        result = make_prompt(aiClient, content)
+        result = make_prompt(aiClient, data)
         
         if isinstance(result, Error):
             return jsonify(result.to_dict()), 400

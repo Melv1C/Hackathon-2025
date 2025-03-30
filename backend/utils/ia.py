@@ -10,10 +10,10 @@ def createClient():
         api_key=api,
         )
 
-def make_prompt(client, content):
+def make_prompt(client, data):
     with open("utils/prompt.txt", "r") as f:
         prompt = f.read()
-    prompt = prompt.format(content=content)
+    prompt = prompt.format(**data)
     response = client.chat.completions.create(
         extra_body={},
         #model="google/gemini-2.5-pro-exp-03-25:free",

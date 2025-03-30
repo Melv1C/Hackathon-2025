@@ -47,7 +47,7 @@ export function CapsulePage() {
 
     const handleAiAnalysis = () => {
         if (capsule && capsule.content?.contentType === 'text') {
-            analyzeContent(capsule.content.textContent);
+            analyzeContent(capsule);
         }
     };
 

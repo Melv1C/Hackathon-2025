@@ -1,9 +1,10 @@
 import { useMutation } from '@tanstack/react-query';
 import { aiApi } from '../api/aiApi';
+import { CapsuleType } from '../schemas/capsuleSchemas';
 
 export function useAiAnalysis() {
     const analyzeContentMutation = useMutation({
-        mutationFn: (content: string) => aiApi.analyzeContent(content),
+        mutationFn: (capsule: CapsuleType) => aiApi.analyzeContent(capsule),
     });
 
     return {
