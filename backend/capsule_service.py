@@ -43,7 +43,6 @@ class CapsuleService:
             recipients = data.get("recipients", [])
             content_data = data.get("content")
 
-            hash_value = hash(content_data)
             
             # Validate required fields
             if not title or not content_data or not unlock_date:
@@ -51,6 +50,8 @@ class CapsuleService:
                 
             # Prepare content for storage
             json_content = json.dumps(content_data).encode('utf-8')
+
+            hash_value = hash(json_content)
             
             # Encrypt the content
             iv, encrypted_content = encrypt_message(json_content, self.encryption_key)
