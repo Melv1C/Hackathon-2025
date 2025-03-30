@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useAtom } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { useEffect } from 'react';
 import { authApi } from '../api/authApi';
 import { LoginUserType, RegisterUserType } from '../schemas/authSchemas';
@@ -15,13 +15,13 @@ import {
 
 export function useAuth() {
     // Access atoms
-    const [user] = useAtom(userAtom);
-    const [isAuthenticated] = useAtom(isAuthenticatedAtom);
-    const [isLoading] = useAtom(authLoadingAtom);
-    const [error] = useAtom(authErrorAtom);
-    const [, setUser] = useAtom(setUserAtom);
-    const [, setAuthError] = useAtom(setAuthErrorAtom);
-    const [, logout] = useAtom(logoutActionAtom);
+    const user = useAtomValue(userAtom);
+    const isAuthenticated = useAtomValue(isAuthenticatedAtom);
+    const isLoading = useAtomValue(authLoadingAtom);
+    const error = useAtomValue(authErrorAtom);
+    const setUser = useSetAtom(setUserAtom);
+    const setAuthError = useSetAtom(setAuthErrorAtom);
+    const logout = useSetAtom(logoutActionAtom);
 
     // Access query client
     const queryClient = useQueryClient();

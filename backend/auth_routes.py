@@ -42,7 +42,12 @@ def register():
         user_data = User.get_by_id(user_id)
         
         return jsonify({
-            "user": user_data,
+            "user": {
+                "id": user_data["_id"],
+                "email": user_data["email"],
+                "name": user_data.get("name"),
+                "createdAt": user_data["created_at"],
+            },
             "token": token,
             "refreshToken": refresh_token
         }), 201
@@ -82,7 +87,12 @@ def login():
         user_data = User.get_by_id(user_id)
         
         return jsonify({
-            "user": user_data,
+            "user": {
+                "id": user_data["_id"],
+                "email": user_data["email"],
+                "name": user_data.get("name"),
+                "createdAt": user_data["created_at"],
+            },
             "token": token,
             "refreshToken": refresh_token
         }), 200
@@ -120,7 +130,12 @@ def get_current_user():
         if not user_data:
             return jsonify({"error": "User not found"}), 404
             
-        return jsonify(user_data), 200
+        return jsonify({
+            "id": user_data["_id"],
+            "email": user_data["email"],
+            "name": user_data.get("name"),
+            "createdAt": user_data["created_at"],
+        }), 200
         
     except Exception as e:
         logger.error(f"Error retrieving current user: {e}")
