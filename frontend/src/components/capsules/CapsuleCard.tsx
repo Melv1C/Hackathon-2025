@@ -32,9 +32,7 @@ export function CapsuleCard(props: CapsuleCardProps) {
     });
 
     const handleClick = () => {
-        if (isUnlocked) {
-            navigate(`/capsule/${capsule.id}`);
-        }
+        navigate(`/capsule/${capsule.id}`);
     };
 
     // Common card content
@@ -119,8 +117,8 @@ export function CapsuleCard(props: CapsuleCardProps) {
                 borderRadius: 2,
                 transition: 'all 0.3s ease',
                 '&:hover': {
-                    transform: isUnlocked ? 'translateY(-8px)' : 'none',
-                    boxShadow: isUnlocked ? 8 : 4,
+                    transform: 'translateY(-8px)',
+                    boxShadow: 8,
                 },
                 overflow: 'hidden',
                 border: `1px solid ${
@@ -128,33 +126,21 @@ export function CapsuleCard(props: CapsuleCardProps) {
                         ? 'rgba(76, 175, 80, 0.3)'
                         : 'rgba(25, 118, 210, 0.3)'
                 }`,
-                cursor: isUnlocked ? 'pointer' : 'default',
+                cursor: 'pointer',
             }}
             onClick={handleClick}
         >
-            {isUnlocked ? (
-                <CardActionArea
-                    sx={{
-                        height: '100%',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'stretch',
-                        justifyContent: 'flex-start',
-                    }}
-                >
-                    {cardContent}
-                </CardActionArea>
-            ) : (
-                <Box
-                    sx={{
-                        height: '100%',
-                        display: 'flex',
-                        flexDirection: 'column',
-                    }}
-                >
-                    {cardContent}
-                </Box>
-            )}
+            <CardActionArea
+                sx={{
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'stretch',
+                    justifyContent: 'flex-start',
+                }}
+            >
+                {cardContent}
+            </CardActionArea>
         </Card>
     );
 }

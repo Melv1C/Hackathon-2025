@@ -15,7 +15,7 @@ def make_prompt(client, content):
         prompt = f.read()
         response = client.chat.completions.create(
             extra_body={},
-            model="google/gemini-2.5-pro-exp-03-25:free",
+            model= "google/gemini-2.0-flash-thinking-exp:free",
             messages=[
                 {
                 "role": "user",
