@@ -302,7 +302,7 @@ class Capsule:
             cursor = collection.find(query)
             
             capsules = []
-            now = datetime.datetime.now()
+            now = datetime.datetime.now(datetime.timezone.utc)
             
             for capsule in cursor:
                 # Add unlocked status
