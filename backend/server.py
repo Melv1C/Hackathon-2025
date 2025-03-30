@@ -9,6 +9,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 import atexit
 from periodic_tasks import periodic_task
+from utils.ia import *
 
 # Load environment variables
 load_dotenv()
@@ -54,6 +55,8 @@ def create_app(test_config=None):
     scheduler.start()
 
     atexit.register(lambda: scheduler.shutdown())
+
+    aiClient = createClient()
 
     return app
 

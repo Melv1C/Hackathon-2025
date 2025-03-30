@@ -350,6 +350,7 @@ class Capsule:
             
             for capsule in cursor:
                 # Add unlocked status
+                capsule["unlock_date"] = capsule["unlock_date"].replace(tzinfo=datetime.timezone.utc)
                 capsule["is_unlocked"] = now >= capsule["unlock_date"]
                 # Convert ObjectId to string for JSON serialization
                 capsule["_id"] = str(capsule["_id"])
