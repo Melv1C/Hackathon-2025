@@ -8,6 +8,7 @@ from encryption import encrypt_message, decrypt_message
 import ipfs_api
 import datetime
 from utils.email_utils import send_many_email, send_email, return_email_content
+import hashlib
 from dotenv import load_dotenv
 
 # Configure logging
@@ -51,8 +52,7 @@ class CapsuleService:
                 
             # Prepare content for storage
             json_content = json.dumps(content_data).encode('utf-8')
-
-            hash_value = hash(json_content)
+            hash_value = hashlib.sha256(json_content).hexdigest()
             
             # Encrypt the content
             iv, encrypted_content = encrypt_message(json_content, self.encryption_key)
@@ -187,11 +187,11 @@ class CapsuleService:
             # Decrypt the content
             decrypted_content = decrypt_message(iv, encrypted_content, self.encryption_key)
                 
+            new_hash = hashlib.sha256(decrypted_content).hexdigest()
             # Parse the decrypted JSON content
             content_data = json.loads(decrypted_content.decode('utf-8'))
 
-            new_hash = hash(decrypted_content)
-                
+            new_hash = hashlib.sha256(content_data).hexdigest()
             # Return the complete capsule data
             return {
                 "id": capsule_id,

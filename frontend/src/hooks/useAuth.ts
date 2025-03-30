@@ -45,7 +45,9 @@ export function useAuth() {
         } else if (userQueryError) {
             setUser(null);
         }
-    }, [userData, userQueryError, setUser]);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [userData]);
 
     // Initialize auth state on mount if token exists
     useEffect(() => {
@@ -61,6 +63,7 @@ export function useAuth() {
     const loginMutation = useMutation({
         mutationFn: authApi.loginUser,
         onSuccess: (data) => {
+            console.log('Login successful:', data);
             setUser(data.user);
             queryClient.invalidateQueries({ queryKey: ['currentUser'] });
         },
@@ -76,6 +79,7 @@ export function useAuth() {
     const registerMutation = useMutation({
         mutationFn: authApi.registerUser,
         onSuccess: (data) => {
+            console.log('Registration successful:', data);
             setUser(data.user);
             queryClient.invalidateQueries({ queryKey: ['currentUser'] });
         },

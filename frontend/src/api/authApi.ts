@@ -16,6 +16,19 @@ export const authApi = {
         userData: RegisterUserType
     ): Promise<AuthResponseType> => {
         const response = await apiClient.post('/auth/register', userData);
+
+        // Store token in localStorage for future requests
+        if (response.data.token) {
+            localStorage.setItem('auth_token', response.data.token);
+
+            if (response.data.refreshToken) {
+                localStorage.setItem(
+                    'refresh_token',
+                    response.data.refreshToken
+                );
+            }
+        }
+
         return response.data;
     },
 
@@ -64,6 +77,7 @@ export const authApi = {
      * @returns Current user data
      */
     getCurrentUser: async (): Promise<UserType> => {
+        console.log('Fetching current user...');
         const response = await apiClient.get('/auth/me');
         return response.data;
     },

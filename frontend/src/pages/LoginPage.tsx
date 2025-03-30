@@ -39,6 +39,7 @@ export function LoginPage() {
 
     const onSubmit = async (data: LoginUserType) => {
         try {
+            console.log('Login data:', data); // Log the data being sent
             await loginUser(data);
             navigate('/');
         } catch (error) {
