@@ -6,7 +6,7 @@ def periodic_task():
     """Task to run every 24 hours"""
     capsules_to_send = get_unlockable_capsules()
     for caps in capsules_to_send:
-        if caps.get("recipients") == None:
+        if caps.get("recipients") is None:
             continue
         send_many_email("bien  joudsnjknvx", caps.get("recipients"), "sujet du mail")
         update_capsule_attribute(caps["_id"],"email_sent",True)
