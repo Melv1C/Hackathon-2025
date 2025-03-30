@@ -32,7 +32,7 @@ export const CapsuleSchema = z.object({
     id: z.string(),
     title: z.string(),
     description: z.string().nullable().optional(),
-    content: CapsuleContentSchema,
+    content: CapsuleContentSchema.nullable(),
     creationDate: z.coerce.date(),
     unlockDate: z.coerce.date(),
     isPrivate: z.boolean().default(false),

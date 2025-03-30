@@ -20,6 +20,7 @@ export const capsuleApi = {
      */
     getCapsule: async (id: string) => {
         const response = await apiClient.get(`/capsules/${id}`);
+        console.log('Capsule response:', response.data);
         // Handle response data which might contain base64 file content
         return CapsuleSchema.parse(response.data);
     },
@@ -29,10 +30,7 @@ export const capsuleApi = {
      */
     getUserCapsules: async (): Promise<UserCapsulesType> => {
         const response = await apiClient.get('/capsules');
-        console.log('User capsules response:', response.data);
-        const test = UserCapsulesSchema.parse(response.data);
-        console.log('Parsed user capsules:', test);
-        return test;
+        return UserCapsulesSchema.parse(response.data);
     },
 
     /**
