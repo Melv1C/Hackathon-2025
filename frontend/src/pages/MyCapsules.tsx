@@ -43,8 +43,6 @@ export function MyCapsules() {
     const { useUserCapsules } = useCapsules();
     const { data: userCapsules, isLoading, error, refetch } = useUserCapsules();
 
-    console.log('userCapsules', userCapsules);
-
     // Handle tab change
     const handleTabChange = (
         _event: React.SyntheticEvent,

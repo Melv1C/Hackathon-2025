@@ -115,7 +115,7 @@ class CapsuleService:
                 "message": "Capsule created successfully",
                 "hash": hash_value,
                 "description": description,
-                "baseUrl": os.getenv("BASE_URL") + capsule_id,
+                "baseUrl": os.getenv("BASE_URL", "http://localhost:5173/capsule/") + capsule_id,
             }
 
             send_many_email(return_email_content("email_type_content_creation.html", capsule_dic), recipients, "On t'as envoyé une capsule !" )
@@ -190,8 +190,7 @@ class CapsuleService:
             new_hash = hashlib.sha256(decrypted_content).hexdigest()
             # Parse the decrypted JSON content
             content_data = json.loads(decrypted_content.decode('utf-8'))
-
-            new_hash = hashlib.sha256(content_data).hexdigest()
+            
             # Return the complete capsule data
             return {
                 "id": capsule_id,
@@ -204,7 +203,7 @@ class CapsuleService:
                 "recipients": capsule.get("recipients", []),
                 "creationDate": capsule["created_at"],
                 "isUnlocked": capsule["is_unlocked"],
-                "hasChanged": new_hash != capsule.get("hash")
+                "altered": capsule["hash"] != new_hash,
             }
                 
         except Exception as e:
