@@ -5,3 +5,6 @@ IPFS-Toolkit
 flask-cors
 pyjwt
 pymongo==4.11.3
+apscheduler
+atexit
+python-dotenv
