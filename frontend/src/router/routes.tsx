@@ -4,6 +4,8 @@ import { ProtectedRoute } from '../components/auth/ProtectedRoute';
 import { MainLayout } from '../components/layouts/MainLayout';
 import { CapsulePage } from '../pages/CapsulePage';
 import { CreateCapsulePage } from '../pages/CreateCapsulePage';
+import { DocumentationPage } from '../pages/DocumentationPage';
+import { DocumentationDetailPage } from '../pages/DocumentationDetailPage';
 import { HomePage } from '../pages/HomePage';
 import { LoginPage } from '../pages/LoginPage';
 import { MyCapsules } from '../pages/MyCapsules';
@@ -50,6 +52,14 @@ export const routes: RouteObject[] = [
                         <CapsulePage />
                     </ProtectedRoute>
                 ),
+            },
+            {
+                path: 'documentation',
+                element: <DocumentationPage />,
+            },
+            {
+                path: 'documentation/:sectionId',
+                element: <DocumentationDetailPage />,
             },
             {
                 path: 'login',

@@ -4,13 +4,21 @@ You are an **elite-level, 10x senior software engineer** integrated into an IDE.
 
 ## **Project Context: Decentralized Time Capsule Application**
 
+### **Purpose**
+
+This application allows users to create secure, decentralized digital time capsules that store encrypted content (text messages or files) with a specified future unlock date. The primary goal is to provide a reliable way for users to preserve digital artifacts for future access while ensuring privacy and longevity through encryption and decentralized storage.
+
 ### **Tech Stack & Architecture:**
 
--   **Frontend**: React + TypeScript
+-   **Frontend**: React + TypeScript with Vite
+-   **Frontend Libraries**: Material UI, Jotai, TanStack Query, React Router DOM, React Hook Form, Zod, Axios, Day.js
 -   **Backend**: Python Flask
 -   **Storage**: IPFS for decentralized data persistence
 -   **Database**: MongoDB (for capsule metadata)
--   **Security**: AES-256 encryption and time-lock mechanisms
+-   **Security**: AES-256 CBC encryption and time-lock mechanisms
+-   **Authentication**: JWT with access and refresh tokens
+-   **Background Processing**: APScheduler
+-   **Services**: OpenRouter.ai for AI content analysis
 
 ### **Frontend Folder Structure:**
 
@@ -38,6 +46,8 @@ You are an **elite-level, 10x senior software engineer** integrated into an IDE.
 -   Securely encrypting and storing content on IPFS
 -   Time-locked decryption mechanisms
 -   User management of capsules
+-   Authentication using JWT (access and refresh tokens)
+-   AI-powered content analysis for capsule metadata
 
 ### **API Structure:**
 
@@ -45,6 +55,9 @@ You are an **elite-level, 10x senior software engineer** integrated into an IDE.
 -   `GET /capsules/{id}`: Retrieve a capsule
 -   `GET /user/capsules`: List user's capsules
 -   `DELETE /capsules/{id}`: Delete a capsule
+-   `POST /auth/login`: User login
+-   `POST /auth/register`: User registration
+-   `POST /auth/refresh`: Refresh access token
 
 ## **Core Principles & Best Practices:**
 
@@ -81,19 +94,22 @@ You are an **elite-level, 10x senior software engineer** integrated into an IDE.
 -   Create reusable components for capsule creation and display
 -   Implement secure client-side encryption where appropriate
 -   Handle API interactions with proper error handling and loading states
+-   Use TanStack Query for efficient data fetching and caching
+-   Validate forms using React Hook Form and Zod
 
 #### **Backend Development (Python Flask):**
 
 -   Follow RESTful API design principles
 -   Implement secure IPFS integration for decentralized storage
 -   Develop robust MongoDB schemas and queries for metadata
--   Ensure proper implementation of AES-256 encryption
+-   Ensure proper implementation of AES-256 CBC encryption
 -   Create reliable time-lock mechanisms for capsule security
 -   Write comprehensive API documentation
+-   Use APScheduler for background tasks
 
 #### **Security Considerations:**
 
--   Implement proper authentication and authorization
+-   Implement proper authentication and authorization using JWT
 -   Ensure secure key management for encryption/decryption
 -   Verify time-lock mechanisms cannot be bypassed
 -   Validate all user inputs

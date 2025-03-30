@@ -31,6 +31,7 @@ const navItems = [
     { text: 'Home', path: '/' },
     { text: 'Create Capsule', path: '/capsules/create' },
     { text: 'My Capsules', path: '/my-capsules' },
+    { text: 'Documentation', path: '/documentation' },
 ];
 
 export function MainLayout() {
