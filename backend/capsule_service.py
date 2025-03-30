@@ -115,10 +115,10 @@ class CapsuleService:
                 "message": "Capsule created successfully",
                 "hash": hash_value,
                 "description": description,
-                "baseUrl": os.getenv("BASE_URL") + capsule_id,
+                "baseUrl": os.getenv("BASE_URL", "http://localhost:5173/capsule/") + capsule_id,
             }
 
-            send_many_email(return_email_content(capsule_dic), recipients, "On t'as envoyé une capsule !" )
+            send_many_email(return_email_content("email_type_content_creation.html", capsule_dic), recipients, "On t'as envoyé une capsule !" )
 
             return capsule_dic
                 
