@@ -15,18 +15,42 @@ import {
     Typography,
 } from '@mui/material';
 import { useParams } from 'react-router-dom';
+import { CountdownTimer } from '../components/ui/CountdownTimer';
 import { useCapsules } from '../hooks/useCapsules';
+import { useCountdown } from '../hooks/useCountdown';
 
 export function CapsulePage() {
     const { capsuleId } = useParams<{ capsuleId: string }>();
     const { useCapsule } = useCapsules();
-    const { data: capsule, isLoading, isError, error } = useCapsule(capsuleId);
+    const {
+        data: capsule,
+        isLoading,
+        isError,
+        error,
+        refetch,
+    } = useCapsule(capsuleId);
+
+    // Calculate countdown timer if capsule exists and is locked
+    const unlockDate =
+        capsule && !capsule.isUnlocked ? new Date(capsule.unlockDate) : null;
+    const countdown = useCountdown(unlockDate);
+
+    // Handle countdown completion
+    const handleCountdownComplete = () => {
+        console.log('Capsule countdown completed - refreshing capsule data');
+        refetch();
+    };
 
     console.log('Capsule data:', capsule);
 
     // Helper function to download file content
     const downloadFile = () => {
-        if (!capsule || capsule.content.contentType !== 'file') return;
+        if (
+            !capsule ||
+            !capsule.content ||
+            capsule.content.contentType !== 'file'
+        )
+            return;
 
         const { fileData, fileName, fileType } = capsule.content;
 
@@ -88,7 +112,7 @@ export function CapsulePage() {
     }
 
     const creationDate = formatDate(capsule.creationDate);
-    const unlockDate = formatDate(capsule.unlockDate);
+    const unlockDateFormatted = formatDate(capsule.unlockDate);
     const isUnlocked = capsule.isUnlocked;
 
     return (
@@ -124,8 +148,8 @@ export function CapsulePage() {
                         icon={isUnlocked ? <LockOpenIcon /> : <LockClockIcon />}
                         label={
                             isUnlocked
-                                ? `Unlocked on: ${unlockDate}`
-                                : `Unlocks on: ${unlockDate}`
+                                ? `Unlocked on: ${unlockDateFormatted}`
+                                : `Unlocks on: ${unlockDateFormatted}`
                         }
                         variant="outlined"
                         color={isUnlocked ? 'success' : 'primary'}
@@ -153,38 +177,51 @@ export function CapsulePage() {
                 </Typography>
 
                 {!isUnlocked ? (
-                    <Card sx={{ bgcolor: 'action.hover', mb: 2 }}>
+                    <Card
+                        sx={{
+                            bgcolor: 'action.hover',
+                            mb: 2,
+                            background:
+                                'linear-gradient(135deg, #8e2de2, #4a00e0)',
+                            color: 'white',
+                        }}
+                    >
                         <CardContent>
                             <Box
                                 sx={{
                                     display: 'flex',
                                     alignItems: 'center',
                                     gap: 2,
+                                    flexDirection: 'column',
                                 }}
                             >
-                                <LockClockIcon
-                                    color="primary"
-                                    sx={{ fontSize: 40 }}
-                                />
-                                <Typography>
-                                    This capsule is locked and will be available
-                                    on {unlockDate}
-                                </Typography>
+                                {/* Add countdown timer for locked capsules */}
+                                {countdown && (
+                                    <CountdownTimer
+                                        years={countdown.years}
+                                        days={countdown.days}
+                                        hours={countdown.hours}
+                                        minutes={countdown.minutes}
+                                        seconds={countdown.seconds}
+                                        title="Time remaining until unlock:"
+                                        onComplete={handleCountdownComplete}
+                                    />
+                                )}
                             </Box>
                         </CardContent>
                     </Card>
                 ) : (
                     <Box sx={{ mt: 2 }}>
-                        {capsule.content.contentType === 'text' ? (
+                        {capsule.content!.contentType === 'text' ? (
                             <Paper
                                 variant="outlined"
                                 sx={{ p: 3, bgcolor: 'background.paper' }}
                             >
                                 <Typography sx={{ whiteSpace: 'pre-wrap' }}>
-                                    {capsule.content.textContent}
+                                    {capsule.content!.textContent}
                                 </Typography>
                             </Paper>
-                        ) : capsule.content.contentType === 'file' ? (
+                        ) : capsule.content!.contentType === 'file' ? (
                             <Card sx={{ mb: 2 }}>
                                 <CardContent>
                                     <Box
@@ -195,8 +232,8 @@ export function CapsulePage() {
                                         }}
                                     >
                                         <Typography>
-                                            File: {capsule.content.fileName} (
-                                            {capsule.content.fileType})
+                                            File: {capsule.content!.fileName} (
+                                            {capsule.content!.fileType})
                                         </Typography>
                                         <Button
                                             variant="contained"

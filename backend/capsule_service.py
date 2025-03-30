@@ -7,7 +7,7 @@ from error import Error
 from encryption import encrypt_message, decrypt_message
 import ipfs_api
 import datetime
-from utils.email_utils import send_many_email, send_email
+from utils.email_utils import send_many_email, send_email, return_email_content
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -42,6 +42,7 @@ class CapsuleService:
             is_private = data.get("isPrivate", False)
             recipients = data.get("recipients", [])
             content_data = data.get("content")
+
             
             # Validate required fields
             if not title or not content_data or not unlock_date:
@@ -49,6 +50,8 @@ class CapsuleService:
                 
             # Prepare content for storage
             json_content = json.dumps(content_data).encode('utf-8')
+
+            hash_value = hash(json_content)
             
             # Encrypt the content
             iv, encrypted_content = encrypt_message(json_content, self.encryption_key)
@@ -94,13 +97,14 @@ class CapsuleService:
                 is_private=is_private,
                 owner_id=user_id,
                 description=description,
-                recipients=recipients
+                recipients=recipients,
+                hash= hash_value
             )
             
             if isinstance(capsule_id, Error):
                 return capsule_id
 
-            send_many_email(f"Bonjour, on t'as envoyé une capsule temporelle... , tu pourras l'ouvrir le", recipients, f"Capsule envoyée à toi pour la date:" )
+            send_many_email(return_email_content(), recipients, "On t'as envoyé une capsule !" )
 
             return {
                 "id": capsule_id,
@@ -163,7 +167,7 @@ class CapsuleService:
                 
             if not encrypted_data:
                 return {Error("Impossible de retirer la capsule de IPVS")}
-                
+
             # on transforme le json en dico
             storage_obj = json.loads(encrypted_data)
 
@@ -177,6 +181,8 @@ class CapsuleService:
                 
             # Parse the decrypted JSON content
             content_data = json.loads(decrypted_content.decode('utf-8'))
+
+            new_hash = hash(content_data)
                 
             # Return the complete capsule data
             return {
@@ -189,7 +195,8 @@ class CapsuleService:
                 "ownerId": capsule["owner_id"],
                 "recipients": capsule.get("recipients", []),
                 "creationDate": capsule["created_at"],
-                "isUnlocked": capsule["is_unlocked"]
+                "isUnlocked": capsule["is_unlocked"],
+                "hasChanged": new_hash != capsule.get("hash")
             }
                 
         except Exception as e:
